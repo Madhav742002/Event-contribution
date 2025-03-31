@@ -31,6 +31,7 @@ export default function Header() {
     localStorage.setItem('userRole', role);
     setUserRole(role);
     setShowRoleSelection(false);
+    setIsOpen(false); // Close mobile menu after selection
     window.location.href = '/sign-in';
   };
 
@@ -182,28 +183,32 @@ export default function Header() {
 
             {/* Conditional Login/User Button */}
             {!isLoaded ? null : isSignedIn ? (
-              <UserButton />
+              <div className="px-4 w-full flex justify-center">
+                <UserButton />
+              </div>
             ) : (
-              <div className="flex flex-col items-center space-y-2 w-full px-4">
-                {showRoleSelection ? (
+              <div className="flex flex-col items-center space-y-2 w-full px-4" ref={dropdownRef}>
+                <Button 
+                  onClick={handleLoginClick} 
+                  className="w-full"
+                >
+                  Login
+                </Button>
+                {showRoleSelection && (
                   <>
                     <Button 
                       onClick={() => handleRoleSelection('admin')}
-                      className="w-full bg-sky-500 hover:bg-sky-600"
+                      className="w-full bg-amber-600 hover:bg-black"
                     >
                       Admin
                     </Button>
                     <Button 
                       onClick={() => handleRoleSelection('user')}
-                      className="w-full bg-sky-500 hover:bg-sky-600"
+                      className="w-full bg-amber-600 hover:bg-black"
                     >
                       User
                     </Button>
                   </>
-                ) : (
-                  <Button onClick={handleLoginClick} className="w-full">
-                    Login
-                  </Button>
                 )}
               </div>
             )}
