@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { TiThMenuOutline } from "react-icons/ti";
 import { X } from "lucide-react";
 import { UserButton, useUser } from "@clerk/nextjs";
