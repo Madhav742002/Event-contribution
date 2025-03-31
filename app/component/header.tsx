@@ -1,52 +1,14 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { TiThMenuOutline } from "react-icons/ti";
 import { X } from "lucide-react";
 import { UserButton, useUser } from "@clerk/nextjs";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [showRoleSelection, setShowRoleSelection] = useState(false);
-  const { isSignedIn, isLoaded, user } = useUser();
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const [userRole, setUserRole] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-    // Check for user role in localStorage when component mounts
-    const role = localStorage.getItem('userRole');
-    setUserRole(role);
-  }, [isSignedIn]); // Re-run when auth state changes
-
-  const handleLoginClick = () => {
-    if (!isSignedIn) {
-      setShowRoleSelection(!showRoleSelection);
-    }
-  };
-
-  const handleRoleSelection = (role: string) => {
-    localStorage.setItem('userRole', role);
-    setUserRole(role);
-    setShowRoleSelection(false);
-    setIsOpen(false); // Close mobile menu after selection
-    window.location.href = '/sign-in';
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowRoleSelection(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  const { isSignedIn, isLoaded } = useUser(); // Get authentication state
 
   return (
     <nav className="bg-amber-600 p-3">
@@ -75,51 +37,22 @@ export default function Header() {
         </ul>
 
         {/* Buttons (Desktop Only) */}
-        <div className="hidden md:flex items-center space-x-4">
-          {/* Show selected role when signed in */}
-          {isClient && isSignedIn && userRole && (
-            <span className="text-white font-bold bg-amber-700 px-3 py-1 rounded-md">
-              {userRole === 'admin' ? 'Admin' : 'User'}
-            </span>
-          )}
-
-          {/* Show Control Event button only for admin */}
-          {isClient && isSignedIn && userRole === 'admin' && (
-            <Button className="bg-green-600">
-              <Link href="/controlEvent" className="p-2 text-white font-bold">
-                Control Event
-              </Link>
-            </Button>
-          )}
+        <div className="hidden md:flex space-x-4">
+          <Button className="bg-green-600">
+            <Link href="/controlEvent" className="p-2 text-white font-bold">
+              Control Event
+            </Link>
+          </Button>
 
           {/* Conditional Login/User Button */}
           {!isLoaded ? null : isSignedIn ? (
             <UserButton />
           ) : (
-            <div className="relative" ref={dropdownRef}>
-              <Button onClick={handleLoginClick}>
-                <span className="text-white font-bold">Login</span>
-              </Button>
-              
-              {showRoleSelection && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
-                  <div className="py-1">
-                    <button
-                      onClick={() => handleRoleSelection('admin')}
-                      className="block w-full text-center px-3 py-1 text-sm text-white font-bold bg-green-500 hover:bg-black mt-1"
-                    >
-                      Admin
-                    </button>
-                    <button
-                      onClick={() => handleRoleSelection('user')}
-                      className="block w-full text-center px-3 py-1 text-sm text-white font-bold bg-green-500 hover:bg-black mt-1"
-                    >
-                      User
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            <Button>
+              <Link href="/sign-in" className="text-white font-bold">
+                Login
+              </Link>
+            </Button>
           )}
         </div>
 
@@ -131,7 +64,7 @@ export default function Header() {
 
       {/* Mobile Menu (Visible when isOpen) */}
       {isOpen && (
-        <div className="absolute top-16 left-0 w-full bg-amber-700 md:hidden z-20">
+        <div className="absolute top-16 left-0 w-full bg-amber-700 md:hidden">
           <ul className="flex flex-col items-center py-4 space-y-4">
             <Link
               href="/"
@@ -162,55 +95,23 @@ export default function Header() {
               Task Management
             </Link>
 
-            {/* Show selected role when signed in (mobile) */}
-            {isClient && isSignedIn && userRole && (
-              <span className="text-white font-bold bg-amber-800 px-4 py-2 rounded-md">
-                {userRole === 'admin' ? 'Admin' : 'User'}
-              </span>
-            )}
-
-            {/* Show Control Event button only for admin in mobile */}
-            {isClient && isSignedIn && userRole === 'admin' && (
-              <Link href="/controlEvent" className="p-2 text-white font-bold w-full px-4">
-                <Button
-                  className="bg-green-600 w-full"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Control Event
-                </Button>
-              </Link>
-            )}
+            {/* Buttons inside Mobile Menu */}
+            <Link href="/controlEvent" className="p-2 text-white font-bold">
+              <Button
+                className="bg-green-600 w-full"
+                onClick={() => setIsOpen(false)}
+              >
+                Control Event
+              </Button>
+            </Link>
 
             {/* Conditional Login/User Button */}
             {!isLoaded ? null : isSignedIn ? (
-              <div className="px-4 w-full flex justify-center">
-                <UserButton />
-              </div>
+              <UserButton />
             ) : (
-              <div className="flex flex-col items-center space-y-2 w-full px-4" ref={dropdownRef}>
-                <Button 
-                  onClick={handleLoginClick} 
-                  className="w-full"
-                >
-                  Login
-                </Button>
-                {showRoleSelection && (
-                  <>
-                    <Button 
-                      onClick={() => handleRoleSelection('admin')}
-                      className="w-full bg-amber-600 hover:bg-black"
-                    >
-                      Admin
-                    </Button>
-                    <Button 
-                      onClick={() => handleRoleSelection('user')}
-                      className="w-full bg-amber-600 hover:bg-black"
-                    >
-                      User
-                    </Button>
-                  </>
-                )}
-              </div>
+              <Link href="/sign-in" className="text-white font-bold">
+                <Button onClick={() => setIsOpen(false)}>Login</Button>
+              </Link>
             )}
           </ul>
         </div>
