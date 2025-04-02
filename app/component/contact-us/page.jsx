@@ -45,7 +45,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-6 md:px-16 lg:px-32">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8 md:px-16 lg:px-32">
       <div className="max-w-4xl w-full bg-white shadow-xl rounded-3xl flex flex-col md:flex-row overflow-hidden">
         {/* Left Section */}
         <div className="bg-yellow-200 p-10 flex flex-col justify-center md:w-1/3 text-left">
