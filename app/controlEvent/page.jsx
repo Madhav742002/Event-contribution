@@ -168,12 +168,12 @@ export default function ControlEvent() {
       id: Date.now().toString(),
       userId: userId
     };
-    
+
     const existingIndex = savedEvents.findIndex(
       event => event.organizationName === formData.organizationName && 
               event.eventName === formData.eventName
     );
-    
+
     let updatedSavedEvents;
     if (existingIndex >= 0) {
       updatedSavedEvents = [...savedEvents];
@@ -181,7 +181,7 @@ export default function ControlEvent() {
     } else {
       updatedSavedEvents = [...savedEvents, newSavedEvent];
     }
-    
+
     setSavedEvents(updatedSavedEvents);
     setFormData(prev => ({ ...prev, userId }));
     localStorage.setItem('isLoggedIn', 'true');
@@ -263,7 +263,7 @@ export default function ControlEvent() {
 
     const fileType = file.type.startsWith('image/') ? 'image' : 
                     file.type.startsWith('video/') ? 'video' : '';
-    
+
     if (!fileType) {
       alert('Please upload an image or video file');
       return;
@@ -392,7 +392,7 @@ export default function ControlEvent() {
                   <h3 className="font-semibold">{event.organizationName}</h3>
                   <p className="text-sm">{event.eventName}</p>
                   <p className="text-xs text-gray-500">{event.role}</p>
-                  
+
                   <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button 
                       onClick={() => handleEditSavedEvent(index)}
@@ -416,7 +416,7 @@ export default function ControlEvent() {
             <p className="text-gray-500 text-sm">No saved events yet</p>
           )}
         </div>
-        
+
         {/* Main Form */}
         <div className="w-3/4 m-3 px-3">
           <h1 className="text-xl font-bold m-2 text-red-700">Event Registration Form</h1>
@@ -438,49 +438,49 @@ export default function ControlEvent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Organization Name</label>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">Organization Name</label>
                 <input
                   type="text"
                   name="organizationName"
                   value={formData.organizationName}
                   onChange={(e) => setFormData({...formData, organizationName: e.target.value})}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Event Name</label>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">Event Name</label>
                 <input
                   type="text"
                   name="eventName"
                   value={formData.eventName}
                   onChange={(e) => setFormData({...formData, eventName: e.target.value})}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Your Name</label>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">Your Name</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Email</label>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">Email</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                   required
                 />
               </div>
@@ -503,7 +503,7 @@ export default function ControlEvent() {
 
               <button
                 type="submit"
-                className="bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600 transition-colors"
+                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:opacity-90 transition-all transform hover:scale-105 font-medium shadow-md hover:shadow-lg"
               >
                 Submit
               </button>
@@ -527,7 +527,7 @@ export default function ControlEvent() {
                 <h3 className="font-semibold">{event.organizationName}</h3>
                 <p className="text-sm">{event.eventName}</p>
                 <p className="text-xs text-gray-500">{event.role}</p>
-                
+
                 <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button 
                     onClick={() => handleEditSavedEvent(index)}
@@ -551,7 +551,7 @@ export default function ControlEvent() {
           <p className="text-gray-500 text-sm">No saved events yet</p>
         )}
       </div>
-      
+
       {/* Main Content */}
       <div className="w-3/4 m-3 px-3">
         <div className="flex justify-between items-center mb-4">
@@ -565,7 +565,7 @@ export default function ControlEvent() {
             <LogOut size={18} /> Logout
           </button>
         </div>
-        
+
         <div className="mb-4 p-4 bg-gray-100 rounded">
           <h2 className="font-semibold">Welcome, {formData.name}!</h2>
           <p>Role: {formData.role === 'admin' ? 'Administrator' : 'User'}</p>
@@ -579,7 +579,7 @@ export default function ControlEvent() {
               <TabsTrigger value="volunteer">Volunteer</TabsTrigger>
               <TabsTrigger value="control">Control</TabsTrigger>
             </TabsList>
-            
+
             {/* Admin Tab */}
             <TabsContent value="admin">
               <div className="p-4 border rounded mt-4">
@@ -605,7 +605,7 @@ export default function ControlEvent() {
                 </div>
               </div>
             </TabsContent>
-            
+
             {/* Volunteer Tab */}
             <TabsContent value="volunteer">
               <div className="p-4 border rounded mt-4">
@@ -636,41 +636,41 @@ export default function ControlEvent() {
                       </div>
                       <form onSubmit={handleVolunteerSubmit} className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium mb-1">Name</label>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">Name</label>
                           <input
                             type="text"
                             name="name"
                             value={volunteerForm.name}
                             onChange={(e) => setVolunteerForm({...volunteerForm, name: e.target.value})}
-                            className="w-full p-2 border rounded"
+                            className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                             required
                           />
                         </div>
-                        
+
                         <div>
-                          <label className="block text-sm font-medium mb-1">Email</label>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">Email</label>
                           <input
                             type="email"
                             name="email"
                             value={volunteerForm.email}
                             onChange={(e) => setVolunteerForm({...volunteerForm, email: e.target.value})}
-                            className="w-full p-2 border rounded"
+                            className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                             required
                           />
                         </div>
-                        
+
                         <div>
-                          <label className="block text-sm font-medium mb-1">ID/Roll Number</label>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">ID/Roll Number</label>
                           <input
                             type="text"
                             name="id"
                             value={volunteerForm.id}
                             onChange={(e) => setVolunteerForm({...volunteerForm, id: e.target.value})}
-                            className="w-full p-2 border rounded"
+                            className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                             required
                           />
                         </div>
-                        
+
                         <div>
                           <label className="block text-sm font-medium mb-1">Post</label>
                           <select
@@ -688,32 +688,32 @@ export default function ControlEvent() {
                             <option value="other">Other</option>
                           </select>
                         </div>
-                        
+
                         {volunteerForm.post === "other" && (
                           <div>
-                            <label className="block text-sm font-medium mb-1">Specify Post</label>
+                            <label className="block text-sm font-semibold mb-2 text-gray-700">Specify Post</label>
                             <input
                               type="text"
                               name="customPost"
                               value={volunteerForm.customPost}
                               onChange={(e) => setVolunteerForm({...volunteerForm, customPost: e.target.value})}
-                              className="w-full p-2 border rounded"
+                              className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                               required
                             />
                           </div>
                         )}
-                        
+
                         <div className="flex justify-end gap-3">
                           <button
                             type="button"
                             onClick={() => setShowVolunteerForm(false)}
-                            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
+                            className="bg-gray-500 text-white px-6 py-3 rounded-xl hover:bg-gray-600 transition-all transform hover:scale-105 font-medium shadow-md hover:shadow-lg"
                           >
                             Cancel
                           </button>
                           <button
                             type="submit"
-                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+                            className="bg-green-500 text-white px-6 py-3 rounded-xl hover:bg-green-600 transition-all transform hover:scale-105 font-medium shadow-md hover:shadow-lg"
                           >
                             {editingVolunteerIndex !== null ? "Update" : "Submit"}
                           </button>
@@ -771,7 +771,7 @@ export default function ControlEvent() {
                 )}
               </div>
             </TabsContent>
-            
+
             {/* Control Tab */}
             <TabsContent value="control">
               <div className="p-4 border rounded mt-4">
@@ -787,8 +787,8 @@ export default function ControlEvent() {
 
                 {/* Event Form Modal */}
                 {showEventForm && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg w-full max-w-md">
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+                    <div className="bg-white p-6 rounded-lg w-full max-w-md my-8 relative max-h-[90vh] overflow-y-auto">
                       <div className="flex justify-between items-center mb-4">
                         <h3 className="text-xl font-bold">
                           {editingEventIndex !== null ? "Edit Event" : "Add Event"}
@@ -802,75 +802,75 @@ export default function ControlEvent() {
                       </div>
                       <form onSubmit={handleEventSubmit} className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium mb-1">Event Title</label>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">Event Title</label>
                           <input
                             type="text"
                             name="title"
                             value={eventForm.title}
                             onChange={(e) => setEventForm({...eventForm, title: e.target.value})}
-                            className="w-full p-2 border rounded"
-                            required
-                          />
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium mb-1">Description</label>
-                          <textarea
-                            name="description"
-                            value={eventForm.description}
-                            onChange={(e) => setEventForm({...eventForm, description: e.target.value})}
-                            className="w-full p-2 border rounded"
-                            rows="3"
-                            required
-                          />
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium mb-1">Date</label>
-                            <input
-                              type="date"
-                              name="date"
-                              value={eventForm.date}
-                              onChange={(e) => setEventForm({...eventForm, date: e.target.value})}
-                              className="w-full p-2 border rounded"
-                              required
-                            />
-                          </div>
-                          
-                          <div>
-                            <label className="block text-sm font-medium mb-1">Time</label>
-                            <input
-                              type="time"
-                              name="time"
-                              value={eventForm.time}
-                              onChange={(e) => setEventForm({...eventForm, time: e.target.value})}
-                              className="w-full p-2 border rounded"
-                              required
-                            />
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium mb-1">Location</label>
-                          <input
-                            type="text"
-                            name="location"
-                            value={eventForm.location}
-                            onChange={(e) => setEventForm({...eventForm, location: e.target.value})}
-                            className="w-full p-2 border rounded"
+                            className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                             required
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium mb-1">Ticket Price (₹)</label>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">Description</label>
+                          <textarea
+                            name="description"
+                            value={eventForm.description}
+                            onChange={(e) => setEventForm({...eventForm, description: e.target.value})}
+                            className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
+                            rows="3"
+                            required
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-semibold mb-2 text-gray-700">Date</label>
+                            <input
+                              type="date"
+                              name="date"
+                              value={eventForm.date}
+                              onChange={(e) => setEventForm({...eventForm, date: e.target.value})}
+                              className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
+                              required
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-semibold mb-2 text-gray-700">Time</label>
+                            <input
+                              type="time"
+                              name="time"
+                              value={eventForm.time}
+                              onChange={(e) => setEventForm({...eventForm, time: e.target.value})}
+                              className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">Location</label>
+                          <input
+                            type="text"
+                            name="location"
+                            value={eventForm.location}
+                            onChange={(e) => setEventForm({...eventForm, location: e.target.value})}
+                            className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">Ticket Price (₹)</label>
                           <input
                             type="number"
                             name="ticketPrice"
                             value={eventForm.ticketPrice || ""}
                             onChange={(e) => setEventForm({...eventForm, ticketPrice: e.target.value})}
-                            className="w-full p-2 border rounded"
+                            className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                             min="0"
                           />
                         </div>
@@ -967,18 +967,18 @@ export default function ControlEvent() {
                             </div>
                           )}
                         </div>
-                        
+
                         <div className="flex justify-end gap-3">
                           <button
                             type="button"
                             onClick={() => setShowEventForm(false)}
-                            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
+                            className="bg-gray-500 text-white px-6 py-3 rounded-xl hover:bg-gray-600 transition-all transform hover:scale-105 font-medium shadow-md hover:shadow-lg"
                           >
                             Cancel
                           </button>
                           <button
                             type="submit"
-                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+                            className="bg-green-500 text-white px-6 py-3 rounded-xl hover:bg-green-600 transition-all transform hover:scale-105 font-medium shadow-md hover:shadow-lg"
                           >
                             {editingEventIndex !== null ? "Update" : "Submit"}
                           </button>
@@ -1077,7 +1077,7 @@ export default function ControlEvent() {
             {showPaymentForm && selectedEvent ? (
               <div>
                 <h2 className="text-lg font-semibold mb-4">Purchase Ticket for {selectedEvent.title}</h2>
-                
+
                 <div className="mb-6 border rounded p-4">
                   <h3 className="font-bold text-lg mb-2">{selectedEvent.title}</h3>
                   <p className="text-gray-600 mb-3">{selectedEvent.description}</p>
@@ -1093,31 +1093,31 @@ export default function ControlEvent() {
                   </div>
                 </div>
 
-                <form onSubmit={handlePaymentSubmit} className="space-y-4">
+                <form onSubmit={handlePaymentSubmit} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Your Name</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">Your Name</label>
                     <input
-                     type="text"
-                     name="name"
+                      type="text"
+                      name="name"
                       value={paymentForm.name || formData.name || ""}
                       onChange={(e) => setPaymentForm({...paymentForm, name: e.target.value})}
-                      className="w-full p-2 border rounded"
+                      className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                       required
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium mb-1">Your Email</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">Your Email</label>
                     <input
                       type="email"
                       name="email"
                       value={paymentForm.email || formData.email}
                       onChange={(e) => setPaymentForm({...paymentForm, email: e.target.value})}
-                      className="w-full p-2 border rounded"
+                      className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium mb-1">Payment Method</label>
                     <select
@@ -1134,20 +1134,20 @@ export default function ControlEvent() {
                       <option value="wallet">Wallet</option>
                     </select>
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium mb-1">Transaction ID</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">Transaction ID</label>
                     <input
                       type="text"
                       name="transactionId"
                       value={paymentForm.transactionId}
                       onChange={(e) => setPaymentForm({...paymentForm, transactionId: e.target.value})}
-                      className="w-full p-2 border rounded"
+                      className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                       required
                       placeholder="Enter payment reference number"
                     />
                   </div>
-                  
+
                   <div className="flex justify-end gap-3">
                     <button
                       type="button"
@@ -1155,13 +1155,13 @@ export default function ControlEvent() {
                         setShowPaymentForm(false);
                         setSelectedEvent(null);
                       }}
-                      className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
+                      className="bg-gray-500 text-white px-6 py-3 rounded-xl hover:bg-gray-600 transition-all transform hover:scale-105 font-medium shadow-md hover:shadow-lg"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+                      className="bg-green-500 text-white px-6 py-3 rounded-xl hover:bg-green-600 transition-all transform hover:scale-105 font-medium shadow-md hover:shadow-lg"
                     >
                       Confirm Payment
                     </button>
@@ -1180,7 +1180,7 @@ export default function ControlEvent() {
                     className="flex-1 p-2 border rounded"
                   />
                 </div>
-                
+
                 {getFilteredEvents().length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {getFilteredEvents().map((event, index) => (
@@ -1234,7 +1234,7 @@ export default function ControlEvent() {
                 ) : (
                   <p className="text-center py-4 text-gray-500">No events found</p>
                 )}
-                
+
                 {/* User's Tickets Section */}
                 {getUserTickets().length > 0 && (
                   <div className="mt-8">
