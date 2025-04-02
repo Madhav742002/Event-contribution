@@ -23,6 +23,7 @@
     "drizzle-orm": "^0.40.1",
     "embla-carousel-react": "^8.5.2",
     "formidable": "^3.5.2",
+    "framer-motion": "^12.6.3",
     "fs": "^0.0.1-security",
     "lucide-react": "^0.475.0",
     "mongoose": "^8.11.0",
