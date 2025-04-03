@@ -9,13 +9,16 @@ export const metadata: Metadata = {
   description: "Make a great event and controls",
 };
 
+import ChatBot from "@/components/ui/Chatbot";
+
 export default function Home() {
   return (
     <div className="min-h-screen">
+      <ChatBot />
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-12 md:py-20">
         <div className="container mx-auto px-4 md:px-6 text-center">
-          <h1 className="text-3xl md:text-5xl font-bold mb-4">Welcome to E-collection(Eventify)</h1>
+          <h1 className="text-3xl md:text-5xl font-bold mb-4">Welcome to E-collection</h1>
           <p className="text-lg md:text-xl mb-8">Manage your events efficiently and effectively</p>
           <div className="flex justify-center gap-6">
             <Link href="/controlEvent">
@@ -37,7 +40,7 @@ export default function Home() {
         <div className="container mx-auto px-6">
           <h2 className="text-3xl font-bold text-center mb-12">Our Features</h2>
           <div className="grid md:grid-cols-3 gap-8">
-          <Link href="/event-dashboard" className="cursor-pointer">
+            <Link href="/event-dashboard" className="cursor-pointer">
               <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-indigo-50 hover:border-indigo-200 transform hover:scale-105">
                 <div className="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
                   <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
