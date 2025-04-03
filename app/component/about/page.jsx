@@ -49,9 +49,9 @@ const About = () => {
             Join us today and take your event management to the next level!
           </p>
           <a
-            href="https://eventify.app"
+            href="/"
             className="inline-block px-8 py-3 text-white font-bold tracking-wide bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
-          ></a>
+          >home page</a>
         </div>
       </div>
     </div>
