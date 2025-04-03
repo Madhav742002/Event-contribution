@@ -8,6 +8,16 @@ import { useRouter } from "next/navigation";
 export default function ControlEvent() {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
+  // Load Razorpay script
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   // Main states initialized with data from localStorage
   const [formData, setFormData] = useState({
@@ -347,30 +357,52 @@ export default function ControlEvent() {
 
   const handlePaymentSubmit = (e) => {
     e.preventDefault();
-    const newPayment = {
-      id: Date.now().toString(),
-      eventId: selectedEvent.id,
-      eventTitle: selectedEvent.title,
-      userName: paymentForm.name || formData.name,
-      userEmail: paymentForm.email || formData.email,
-      userId: formData.userId, // Store user ID with payment
-      amount: selectedEvent.ticketPrice,
-      paymentMethod: paymentForm.paymentMethod,
-      transactionId: paymentForm.transactionId,
-      date: new Date().toISOString(),
-      organization: selectedEvent.createdBy
+    
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
+      amount: selectedEvent.ticketPrice * 100, // Amount in paisa
+      currency: "INR",
+      name: "Event Ticket",
+      description: `Ticket for ${selectedEvent.title}`,
+      handler: function(response) {
+        // Save ticket with Razorpay payment ID
+        const newPayment = {
+          id: Date.now().toString(),
+          eventId: selectedEvent.id,
+          eventTitle: selectedEvent.title,
+          userName: paymentForm.name || formData.name,
+          userEmail: paymentForm.email || formData.email,
+          userId: formData.userId,
+          amount: selectedEvent.ticketPrice,
+          paymentMethod: "razorpay",
+          transactionId: response.razorpay_payment_id,
+          date: new Date().toISOString(),
+          organization: selectedEvent.createdBy
+        };
+
+        setPayments([...payments, newPayment]);
+        setPaymentForm({
+          name: "",
+          email: "",
+          amount: "",
+          paymentMethod: "razorpay",
+          transactionId: ""
+        });
+        setSelectedEvent(null);
+        setShowPaymentForm(false);
+        alert("Payment successful! Your ticket has been saved.");
+      },
+      prefill: {
+        name: paymentForm.name || formData.name,
+        email: paymentForm.email || formData.email
+      },
+      theme: {
+        color: "#3399cc"
+      }
     };
 
-    setPayments([...payments, newPayment]);
-    setPaymentForm({
-      name: "",
-      email: "",
-      amount: "",
-      paymentMethod: "credit_card",
-      transactionId: ""
-    });
-    setSelectedEvent(null);
-    setShowPaymentForm(false);
+    const razorpay = new window.Razorpay(options);
+    razorpay.open();
   };
 
   // Only render the UI on the client-side
@@ -1118,35 +1150,9 @@ export default function ControlEvent() {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Payment Method</label>
-                    <select
-                      name="paymentMethod"
-                      value={paymentForm.paymentMethod}
-                      onChange={(e) => setPaymentForm({...paymentForm, paymentMethod: e.target.value})}
-                      className="w-full p-2 border rounded"
-                      required
-                    >
-                      <option value="credit_card">Credit Card</option>
-                      <option value="debit_card">Debit Card</option>
-                      <option value="upi">UPI</option>
-                      <option value="net_banking">Net Banking</option>
-                      <option value="wallet">Wallet</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-700">Transaction ID</label>
-                    <input
-                      type="text"
-                      name="transactionId"
-                      value={paymentForm.transactionId}
-                      onChange={(e) => setPaymentForm({...paymentForm, transactionId: e.target.value})}
-                      className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
-                      required
-                      placeholder="Enter payment reference number"
-                    />
-                  </div>
+                  <p className="text-lg font-semibold mb-4">
+                    Total Amount: ₹{selectedEvent.ticketPrice}
+                  </p>
 
                   <div className="flex justify-end gap-3">
                     <button
