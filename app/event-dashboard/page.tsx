@@ -23,6 +23,7 @@ export default function Dashboard() {
 
   interface StudentDetails {
     name: string;
+    Email: string;
     branch: string;
     program: string;
     academicYear: string;
@@ -38,21 +39,12 @@ export default function Dashboard() {
   
   const [studentDetails, setStudentDetails] = useState<StudentDetails>({
     name: '',
+    Email: '',
     branch: '',
     program: '',
     academicYear: '',
     enrollmentNo: ''
   });
-
-  const saveTicketData = (event: Event, paymentId: string, details: StudentDetails) => {
-    const ticketData = {
-      eventTitle: event.title,
-      transactionId: paymentId,
-      studentDetails: details,
-    };
-  
-    localStorage.setItem(paymentId, JSON.stringify(ticketData)); // Store ticket data
-  };
 
   useEffect(() => {
     const storedEvents = localStorage.getItem('events');
@@ -106,6 +98,7 @@ export default function Dashboard() {
             <hr style="margin: 10px 0; border-color: #333;" />
             <h3 style="margin: 5px 0;">Student Details:</h3>
             <p style="margin: 3px 0;">Name: ${details.name}</p>
+            <p style="margin: 3px 0;">Name: ${details.Email}</p>
             <p style="margin: 3px 0;">Branch: ${details.branch}</p>
             <p style="margin: 3px 0;">Program: ${details.program}</p>
             <p style="margin: 3px 0;">Academic Year: ${details.academicYear}</p>
@@ -257,6 +250,14 @@ export default function Dashboard() {
                 required
                 value={studentDetails.name}
                 onChange={(e) => setStudentDetails({...studentDetails, name: e.target.value})}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Email</label>
+              <Input
+                required
+                value={studentDetails.Email}
+                onChange={(e) => setStudentDetails({...studentDetails, Email: e.target.value})}
               />
             </div>
             <div>
