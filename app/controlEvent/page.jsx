@@ -2,12 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, Trash2, Edit, Upload, X, LogOut, Search, Ticket, IndianRupee } from "lucide-react";
+import { PlusCircle, Trash2, Edit, Upload, X, LogOut, Search, Ticket, IndianRupee, QrCode } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function ControlEvent() {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
+  
   // Load Razorpay script
   useEffect(() => {
     const script = document.createElement("script");
@@ -27,8 +28,14 @@ export default function ControlEvent() {
     name: "",
     gender: "",
     email: "",
-    userId: "" // Added unique user ID
+    userId: "",
+    branch: "",
+    program: "",
+    academicYear: "",
+    semester: "",
+    enrollmentNo: ""
   });
+
   const [volunteers, setVolunteers] = useState([]);
   const [events, setEvents] = useState([]);
   const [savedEvents, setSavedEvents] = useState([]);
@@ -70,7 +77,11 @@ export default function ControlEvent() {
   const [paymentForm, setPaymentForm] = useState({
     name: "",
     email: "",
-    amount: "",
+    branch: "",
+    program: "",
+    academicYear: "",
+    semester: "",
+    enrollmentNo: "",
     paymentMethod: "credit_card",
     transactionId: ""
   });
@@ -89,7 +100,6 @@ export default function ControlEvent() {
 
         if (savedFormData) {
           const parsed = JSON.parse(savedFormData);
-          // Generate user ID if not exists
           const userId = parsed.userId || Date.now().toString();
           setFormData({
             role: parsed.role || "",
@@ -98,9 +108,14 @@ export default function ControlEvent() {
             name: parsed.name || "",
             gender: parsed.gender || "",
             email: parsed.email || "",
-            userId: userId
+            userId: userId,
+            branch: parsed.branch || "",
+            program: parsed.program || "",
+            academicYear: parsed.academicYear || "",
+            semester: parsed.semester || "",
+            enrollmentNo: parsed.enrollmentNo || ""
           });
-          // Update localStorage with generated ID if it wasn't there
+          
           if (!parsed.userId) {
             localStorage.setItem('currentUser', JSON.stringify({
               ...parsed,
@@ -172,7 +187,7 @@ export default function ControlEvent() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const userId = Date.now().toString(); // Generate unique user ID
+    const userId = Date.now().toString();
     const newSavedEvent = {
       ...formData,
       id: Date.now().toString(),
@@ -207,7 +222,12 @@ export default function ControlEvent() {
       name: eventToEdit.name || "",
       gender: eventToEdit.gender || "",
       email: eventToEdit.email || "",
-      userId: eventToEdit.userId || Date.now().toString()
+      userId: eventToEdit.userId || Date.now().toString(),
+      branch: eventToEdit.branch || "",
+      program: eventToEdit.program || "",
+      academicYear: eventToEdit.academicYear || "",
+      semester: eventToEdit.semester || "",
+      enrollmentNo: eventToEdit.enrollmentNo || ""
     });
     setSubmitted(false);
   };
@@ -355,46 +375,326 @@ export default function ControlEvent() {
     }
   };
 
+  const generateTicket = (event, paymentId, studentDetails) => {
+    const qrData = {
+      paymentId,
+      event: {
+        title: event.title,
+        date: event.date,
+        time: event.time,
+        location: event.location,
+        organizer: event.createdBy
+      },
+      student: {
+        name: studentDetails.name,
+        email: studentDetails.email,
+        branch: studentDetails.branch,
+        program: studentDetails.program,
+        academicYear: studentDetails.academicYear,
+        semester: studentDetails.semester,
+        enrollmentNo: studentDetails.enrollmentNo
+      }
+    };
+  
+    const ticketHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Ticket</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        .ticket {
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #fff;
+}
+
+.ticket-header {
+    background: linear-gradient(135deg, #f8f8f8, #ffffff);
+    color: #333;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.ticket-title {
+    font-size: 24px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #222;
+}
+
+.ticket-subtitle {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: #555;
+}
+
+.ticket-details {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+    background: #fff;
+}
+
+.ticket-info {
+    flex: 1;
+    min-width: 250px;
+    padding-right: 15px;
+}
+
+.ticket-qr {
+    flex: 0 0 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-left: 15px;
+    border: 1px solid #e0e0e0;
+}
+
+.ticket-qr img {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 10px;
+}
+
+.ticket-qr p {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+}
+
+.detail-row {
+    margin-bottom: 10px;
+}
+
+.detail-label {
+    font-weight: bold;
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 3px;
+}
+
+.detail-value {
+    font-size: 15px;
+    color: #333;
+}
+
+.divider {
+    height: 1px;
+    background: #eee;
+    margin: 15px 0;
+}
+
+.section-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #222;
+}
+
+.ticket-footer {
+    background: #f5f5f5;
+    padding: 15px;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    border-top: 1px dashed #ccc;
+}
+
+.event-media {
+    width: 100%;
+    padding: 10px 20px;
+    text-align: center;
+    background: #fff;
+}
+
+.event-media img, .event-media video {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #e0e0e0;
+}
+
+@media (max-width: 600px) {
+    .ticket-details {
+        flex-direction: column;
+    }
+    .ticket-info {
+        padding-right: 0;
+        margin-bottom: 20px;
+    }
+    .ticket-qr {
+        margin-left: 0;
+        margin-top: 15px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="ticket">
+        <div class="ticket-header">
+            <h1 class="ticket-title">${event.title}</h1>
+            <p class="ticket-subtitle">${event.description}</p>
+            <div class="detail-row">
+                <div class="detail-value">${event.date} | ${event.time}</div>
+                <div class="detail-value">${event.location}</div>
+                <div class="detail-value">Organized by: ${event.createdBy}</div>
+            </div>
+        </div>
+        
+        ${event.media ? `
+        <div class="event-media">
+            ${event.media.type === 'image' ? 
+                `<img src="${event.media.preview}" alt="Event Image" />` : 
+                `<video src="${event.media.preview}" controls></video>`}
+        </div>` : ''}
+        
+        <div class="ticket-details">
+            <div class="ticket-info">
+                <h3 class="section-title">Student Details</h3>
+                <div class="detail-row">
+                    <div class="detail-label">Name</div>
+                    <div class="detail-value">${studentDetails.name}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Email</div>
+                    <div class="detail-value">${studentDetails.email}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Branch</div>
+                    <div class="detail-value">${studentDetails.branch}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Program</div>
+                    <div class="detail-value">${studentDetails.program}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Academic Year</div>
+                    <div class="detail-value">${studentDetails.academicYear}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Semester</div>
+                    <div class="detail-value">${studentDetails.semester}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Enrollment No</div>
+                    <div class="detail-value">${studentDetails.enrollmentNo}</div>
+                </div>
+                <div class="divider"></div>
+                <div class="detail-row">
+                    <div class="detail-label">Payment ID</div>
+                    <div class="detail-value">${paymentId}</div>
+                </div>
+            </div>
+            
+            <div class="ticket-qr">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+                    `Event: ${event.title}\n` +
+                    `Date: ${event.date}\n` +
+                    `Time: ${event.time}\n` +
+                    `Location: ${event.location}\n` +
+                    `Organizer: ${event.createdBy}\n` +
+                    `Attendee: ${studentDetails.name}\n` +
+                    `Email: ${studentDetails.email}\n` +
+                    `Enrollment: ${studentDetails.enrollmentNo}\n` +
+                    `Payment ID: ${paymentId}`
+                )}" alt="QR Code" />
+                <p>Scan for verification</p>
+            </div>
+        </div>
+        
+        <div class="ticket-footer">
+            Thank you for your purchase!
+        </div>
+    </div>
+</body>
+</html>
+`;
+
+// The rest of your code for generating and downloading the file remains the same
+const blob = new Blob([ticketHTML], { type: 'text/html' });
+const url = window.URL.createObjectURL(blob);
+const link = document.createElement('a');
+link.href = url;
+link.download = `ticket-${event.title}-${paymentId}.html`;
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
+window.URL.revokeObjectURL(url);
+  };
+
   const handlePaymentSubmit = (e) => {
     e.preventDefault();
     
+    const studentDetails = {
+      name: paymentForm.name || formData.name,
+      email: paymentForm.email || formData.email,
+      branch: paymentForm.branch,
+      program: paymentForm.program,
+      academicYear: paymentForm.academicYear,
+      semester: paymentForm.semester,
+      enrollmentNo: paymentForm.enrollmentNo
+    };
+
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
-      amount: selectedEvent.ticketPrice * 100, // Amount in paisa
+      amount: selectedEvent.ticketPrice * 100,
       currency: "INR",
       name: "Event Ticket",
       description: `Ticket for ${selectedEvent.title}`,
       handler: function(response) {
-        // Save ticket with Razorpay payment ID
         const newPayment = {
           id: Date.now().toString(),
           eventId: selectedEvent.id,
           eventTitle: selectedEvent.title,
-          userName: paymentForm.name || formData.name,
-          userEmail: paymentForm.email || formData.email,
+          userName: studentDetails.name,
+          userEmail: studentDetails.email,
           userId: formData.userId,
           amount: selectedEvent.ticketPrice,
           paymentMethod: "razorpay",
           transactionId: response.razorpay_payment_id,
           date: new Date().toISOString(),
-          organization: selectedEvent.createdBy
+          organization: selectedEvent.createdBy,
+          studentDetails: studentDetails
         };
 
         setPayments([...payments, newPayment]);
+        generateTicket(selectedEvent, response.razorpay_payment_id, studentDetails);
         setPaymentForm({
           name: "",
           email: "",
-          amount: "",
+          branch: "",
+          program: "",
+          academicYear: "",
+          semester: "",
+          enrollmentNo: "",
           paymentMethod: "razorpay",
           transactionId: ""
         });
         setSelectedEvent(null);
         setShowPaymentForm(false);
-        alert("Payment successful! Your ticket has been saved.");
+        alert("Payment successful! Your ticket has been generated and saved.");
       },
       prefill: {
-        name: paymentForm.name || formData.name,
-        email: paymentForm.email || formData.email
+        name: studentDetails.name,
+        email: studentDetails.email
       },
       theme: {
         color: "#3399cc"
@@ -403,6 +703,10 @@ export default function ControlEvent() {
 
     const razorpay = new window.Razorpay(options);
     razorpay.open();
+  };
+
+  const navigateToScanner = () => {
+    router.push('/scan-ticket');
   };
 
   // Only render the UI on the client-side
@@ -1145,6 +1449,66 @@ export default function ControlEvent() {
                       name="email"
                       value={paymentForm.email || formData.email}
                       onChange={(e) => setPaymentForm({...paymentForm, email: e.target.value})}
+                      className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">Branch</label>
+                    <input
+                      type="text"
+                      name="branch"
+                      value={paymentForm.branch}
+                      onChange={(e) => setPaymentForm({...paymentForm, branch: e.target.value})}
+                      className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">Program</label>
+                    <input
+                      type="text"
+                      name="program"
+                      value={paymentForm.program}
+                      onChange={(e) => setPaymentForm({...paymentForm, program: e.target.value})}
+                      className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">Academic Year</label>
+                    <input
+                      type="text"
+                      name="academicYear"
+                      value={paymentForm.academicYear}
+                      onChange={(e) => setPaymentForm({...paymentForm, academicYear: e.target.value})}
+                      className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">Semester</label>
+                    <input
+                      type="text"
+                      name="semester"
+                      value={paymentForm.semester}
+                      onChange={(e) => setPaymentForm({...paymentForm, semester: e.target.value})}
+                      className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">Enrollment No</label>
+                    <input
+                      type="text"
+                      name="enrollmentNo"
+                      value={paymentForm.enrollmentNo}
+                      onChange={(e) => setPaymentForm({...paymentForm, enrollmentNo: e.target.value})}
                       className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                       required
                     />

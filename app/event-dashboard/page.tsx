@@ -106,7 +106,13 @@ export default function Dashboard() {
             <p style="margin: 5px 0; font-size: 14px;">Payment ID: ${paymentId}</p>
           </div>
           <div style="flex: 0.5; text-align: center; background: #fff; padding: 10px;">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${paymentId}" alt="QR Code" />
+             <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(JSON.stringify({
+              paymentId,
+              studentDetails: details,
+              eventTitle: event.title,
+              eventDate: event.date,
+              eventTime: event.time
+            }))}" alt="QR Code" />
             <p style="font-size: 12px; color: #333;">Scan for verification</p>
           </div>
         </div>
