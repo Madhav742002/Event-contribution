@@ -21,4 +21,23 @@ export const contact = pgTable("contact",{
   message: text("message", { length: 1000 }).notNull(),
 });
 
+// Admins Table
+export const admins = pgTable("admins", {
+  id: serial("id").primaryKey(),
+  userId: text("userId").notNull(),
+  organizationName: text("organizationName").notNull(),
+  eventName: text("eventName").notNull(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  gender: text("gender").notNull(),
+});
 
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  userId: text("userId").notNull(),
+  organizationName: text("organizationName").notNull(),
+  eventName: text("eventName").notNull(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  gender: text("gender").notNull(),
+});

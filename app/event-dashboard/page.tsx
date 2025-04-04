@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 
 export default function Dashboard() {
+  
   interface Event {
     title: string;
     description: string;

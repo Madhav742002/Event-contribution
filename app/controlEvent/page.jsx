@@ -2,13 +2,24 @@
 
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, Trash2, Edit, Upload, X, LogOut, Search, Ticket, IndianRupee, QrCode } from "lucide-react";
+import {
+  PlusCircle,
+  Trash2,
+  Edit,
+  Upload,
+  X,
+  LogOut,
+  Search,
+  Ticket,
+  IndianRupee,
+  QrCode,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function ControlEvent() {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
-  
+
   // Load Razorpay script
   useEffect(() => {
     const script = document.createElement("script");
@@ -33,7 +44,7 @@ export default function ControlEvent() {
     program: "",
     academicYear: "",
     semester: "",
-    enrollmentNo: ""
+    enrollmentNo: "",
   });
 
   const [volunteers, setVolunteers] = useState([]);
@@ -57,7 +68,7 @@ export default function ControlEvent() {
     email: "",
     id: "",
     post: "volunteer",
-    customPost: ""
+    customPost: "",
   });
 
   const [eventForm, setEventForm] = useState({
@@ -71,7 +82,7 @@ export default function ControlEvent() {
     mediaPreview: "",
     ticketPrice: "",
     ticketDesign: null,
-    ticketDesignPreview: ""
+    ticketDesignPreview: "",
   });
 
   const [paymentForm, setPaymentForm] = useState({
@@ -83,20 +94,20 @@ export default function ControlEvent() {
     semester: "",
     enrollmentNo: "",
     paymentMethod: "credit_card",
-    transactionId: ""
+    transactionId: "",
   });
 
   // Load data from localStorage on component mount
   useEffect(() => {
     setIsClient(true);
     const loadInitialState = () => {
-      if (typeof window !== 'undefined') {
-        const savedFormData = localStorage.getItem('currentUser');
-        const storedVolunteers = localStorage.getItem('volunteers');
-        const storedEvents = localStorage.getItem('events');
-        const storedSavedEvents = localStorage.getItem('savedEvents');
-        const storedPayments = localStorage.getItem('payments');
-        const loginStatus = localStorage.getItem('isLoggedIn');
+      if (typeof window !== "undefined") {
+        const savedFormData = localStorage.getItem("currentUser");
+        const storedVolunteers = localStorage.getItem("volunteers");
+        const storedEvents = localStorage.getItem("events");
+        const storedSavedEvents = localStorage.getItem("savedEvents");
+        const storedPayments = localStorage.getItem("payments");
+        const loginStatus = localStorage.getItem("isLoggedIn");
 
         if (savedFormData) {
           const parsed = JSON.parse(savedFormData);
@@ -113,21 +124,25 @@ export default function ControlEvent() {
             program: parsed.program || "",
             academicYear: parsed.academicYear || "",
             semester: parsed.semester || "",
-            enrollmentNo: parsed.enrollmentNo || ""
+            enrollmentNo: parsed.enrollmentNo || "",
           });
-          
+
           if (!parsed.userId) {
-            localStorage.setItem('currentUser', JSON.stringify({
-              ...parsed,
-              userId: userId
-            }));
+            localStorage.setItem(
+              "currentUser",
+              JSON.stringify({
+                ...parsed,
+                userId: userId,
+              })
+            );
           }
         }
         if (storedVolunteers) setVolunteers(JSON.parse(storedVolunteers) || []);
         if (storedEvents) setEvents(JSON.parse(storedEvents) || []);
-        if (storedSavedEvents) setSavedEvents(JSON.parse(storedSavedEvents) || []);
+        if (storedSavedEvents)
+          setSavedEvents(JSON.parse(storedSavedEvents) || []);
         if (storedPayments) setPayments(JSON.parse(storedPayments) || []);
-        if (loginStatus === 'true') setSubmitted(true);
+        if (loginStatus === "true") setSubmitted(true);
       }
     };
     loadInitialState();
@@ -136,11 +151,11 @@ export default function ControlEvent() {
   // Save data to localStorage whenever it changes
   useEffect(() => {
     if (isClient) {
-      localStorage.setItem('currentUser', JSON.stringify(formData));
-      localStorage.setItem('volunteers', JSON.stringify(volunteers));
-      localStorage.setItem('events', JSON.stringify(events));
-      localStorage.setItem('savedEvents', JSON.stringify(savedEvents));
-      localStorage.setItem('payments', JSON.stringify(payments));
+      localStorage.setItem("currentUser", JSON.stringify(formData));
+      localStorage.setItem("volunteers", JSON.stringify(volunteers));
+      localStorage.setItem("events", JSON.stringify(events));
+      localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
+      localStorage.setItem("payments", JSON.stringify(payments));
     }
   }, [formData, volunteers, events, savedEvents, payments, isClient]);
 
@@ -148,30 +163,36 @@ export default function ControlEvent() {
   useEffect(() => {
     return () => {
       if (eventForm.mediaPreview) URL.revokeObjectURL(eventForm.mediaPreview);
-      if (eventForm.ticketDesignPreview) URL.revokeObjectURL(eventForm.ticketDesignPreview);
+      if (eventForm.ticketDesignPreview)
+        URL.revokeObjectURL(eventForm.ticketDesignPreview);
     };
   }, [eventForm.mediaPreview, eventForm.ticketDesignPreview]);
 
   // Helper functions
   const getOrganizationEvents = () => {
-    return events.filter(event => event.createdBy === formData.organizationName);
+    return events.filter(
+      (event) => event.createdBy === formData.organizationName
+    );
   };
 
   const getFilteredEvents = () => {
-    return events.filter(event => 
-      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.location.toLowerCase().includes(searchTerm.toLowerCase())
+    return events.filter(
+      (event) =>
+        event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        event.location.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
   const getUserTickets = () => {
-    return payments.filter(payment => payment.userId === formData.userId);
+    return payments.filter((payment) => payment.userId === formData.userId);
   };
 
   const handleDeleteTicket = (ticketId) => {
     if (confirm("Are you sure you want to delete this ticket?")) {
-      const updatedPayments = payments.filter(payment => payment.id !== ticketId);
+      const updatedPayments = payments.filter(
+        (payment) => payment.id !== ticketId
+      );
       setPayments(updatedPayments);
     }
   };
@@ -179,39 +200,49 @@ export default function ControlEvent() {
   // Event handlers
   const handleLogout = () => {
     if (confirm("Are you sure you want to logout?")) {
-      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem("isLoggedIn");
       setSubmitted(false);
-      router.push('/');
+      router.push("/");
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const userId = Date.now().toString();
-    const newSavedEvent = {
-      ...formData,
-      id: Date.now().toString(),
-      userId: userId
-    };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const existingIndex = savedEvents.findIndex(
-      event => event.organizationName === formData.organizationName && 
-              event.eventName === formData.eventName
-    );
+  const userId = Date.now().toString();
+  const newEvent = {
+    ...formData,
+    id: userId,
+    userId: userId,
+  };
 
-    let updatedSavedEvents;
-    if (existingIndex >= 0) {
-      updatedSavedEvents = [...savedEvents];
-      updatedSavedEvents[existingIndex] = newSavedEvent;
+  try {
+    const response = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newEvent),
+    });
+
+    const result = await response.json();
+    console.log("API Response:", result);
+
+    if (response.ok) {
+      if (result.message === "Event already exists, opening instead!") {
+        alert("This event already exists! Redirecting...");
+        setSubmitted(true);
+        // Open the event (custom logic can be added here)
+      } else {
+        setSavedEvents((prev) => [...prev, newEvent]);
+        setFormData((prev) => ({ ...prev, userId }));
+        setSubmitted(true);
+      }
     } else {
-      updatedSavedEvents = [...savedEvents, newSavedEvent];
+      console.error("Failed to register event:", result.error);
     }
-
-    setSavedEvents(updatedSavedEvents);
-    setFormData(prev => ({ ...prev, userId }));
-    localStorage.setItem('isLoggedIn', 'true');
-    setSubmitted(true);
-  };
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
 
   const handleEditSavedEvent = (index) => {
     const eventToEdit = savedEvents[index];
@@ -227,7 +258,7 @@ export default function ControlEvent() {
       program: eventToEdit.program || "",
       academicYear: eventToEdit.academicYear || "",
       semester: eventToEdit.semester || "",
-      enrollmentNo: eventToEdit.enrollmentNo || ""
+      enrollmentNo: eventToEdit.enrollmentNo || "",
     });
     setSubmitted(false);
   };
@@ -244,7 +275,10 @@ export default function ControlEvent() {
     e.preventDefault();
     const newVolunteer = {
       ...volunteerForm,
-      post: volunteerForm.post === "other" ? volunteerForm.customPost : volunteerForm.post
+      post:
+        volunteerForm.post === "other"
+          ? volunteerForm.customPost
+          : volunteerForm.post,
     };
 
     if (editingVolunteerIndex !== null) {
@@ -260,7 +294,7 @@ export default function ControlEvent() {
       email: "",
       id: "",
       post: "volunteer",
-      customPost: ""
+      customPost: "",
     });
     setShowVolunteerForm(false);
     setEditingVolunteerIndex(null);
@@ -273,7 +307,7 @@ export default function ControlEvent() {
       email: volunteer.email || "",
       id: volunteer.id || "",
       post: volunteer.post || "volunteer",
-      customPost: volunteer.post || ""
+      customPost: volunteer.post || "",
     });
     setEditingVolunteerIndex(index);
     setShowVolunteerForm(true);
@@ -291,11 +325,14 @@ export default function ControlEvent() {
     const file = e.target.files[0];
     if (!file) return;
 
-    const fileType = file.type.startsWith('image/') ? 'image' : 
-                    file.type.startsWith('video/') ? 'video' : '';
+    const fileType = file.type.startsWith("image/")
+      ? "image"
+      : file.type.startsWith("video/")
+      ? "video"
+      : "";
 
     if (!fileType) {
-      alert('Please upload an image or video file');
+      alert("Please upload an image or video file");
       return;
     }
 
@@ -304,7 +341,7 @@ export default function ControlEvent() {
       ...eventForm,
       media: file,
       mediaType: fileType,
-      mediaPreview: previewUrl
+      mediaPreview: previewUrl,
     });
   };
 
@@ -312,8 +349,8 @@ export default function ControlEvent() {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file for ticket design');
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload an image file for ticket design");
       return;
     }
 
@@ -321,7 +358,7 @@ export default function ControlEvent() {
     setEventForm({
       ...eventForm,
       ticketDesign: file,
-      ticketDesignPreview: previewUrl
+      ticketDesignPreview: previewUrl,
     });
   };
 
@@ -331,15 +368,19 @@ export default function ControlEvent() {
       ...eventForm,
       id: Date.now().toString(),
       createdBy: formData.organizationName,
-      media: eventForm.media ? {
-        name: eventForm.media.name,
-        type: eventForm.mediaType,
-        preview: eventForm.mediaPreview
-      } : null,
-      ticketDesign: eventForm.ticketDesign ? {
-        name: eventForm.ticketDesign.name,
-        preview: eventForm.ticketDesignPreview
-      } : null
+      media: eventForm.media
+        ? {
+            name: eventForm.media.name,
+            type: eventForm.mediaType,
+            preview: eventForm.mediaPreview,
+          }
+        : null,
+      ticketDesign: eventForm.ticketDesign
+        ? {
+            name: eventForm.ticketDesign.name,
+            preview: eventForm.ticketDesignPreview,
+          }
+        : null,
     };
 
     if (editingEventIndex !== null) {
@@ -361,7 +402,7 @@ export default function ControlEvent() {
       mediaPreview: "",
       ticketPrice: "",
       ticketDesign: null,
-      ticketDesignPreview: ""
+      ticketDesignPreview: "",
     });
     setShowEventForm(false);
     setEditingEventIndex(null);
@@ -383,7 +424,7 @@ export default function ControlEvent() {
         date: event.date,
         time: event.time,
         location: event.location,
-        organizer: event.createdBy
+        organizer: event.createdBy,
       },
       student: {
         name: studentDetails.name,
@@ -392,10 +433,10 @@ export default function ControlEvent() {
         program: studentDetails.program,
         academicYear: studentDetails.academicYear,
         semester: studentDetails.semester,
-        enrollmentNo: studentDetails.enrollmentNo
-      }
+        enrollmentNo: studentDetails.enrollmentNo,
+      },
     };
-  
+
     const ticketHTML = `
 <!DOCTYPE html>
 <html>
@@ -559,12 +600,18 @@ export default function ControlEvent() {
             </div>
         </div>
         
-        ${event.media ? `
+        ${
+          event.media
+            ? `
         <div class="event-media">
-            ${event.media.type === 'image' ? 
-                `<img src="${event.media.preview}" alt="Event Image" />` : 
-                `<video src="${event.media.preview}" controls></video>`}
-        </div>` : ''}
+            ${
+              event.media.type === "image"
+                ? `<img src="${event.media.preview}" alt="Event Image" />`
+                : `<video src="${event.media.preview}" controls></video>`
+            }
+        </div>`
+            : ""
+        }
         
         <div class="ticket-details">
             <div class="ticket-info">
@@ -587,7 +634,9 @@ export default function ControlEvent() {
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Academic Year</div>
-                    <div class="detail-value">${studentDetails.academicYear}</div>
+                    <div class="detail-value">${
+                      studentDetails.academicYear
+                    }</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Semester</div>
@@ -595,7 +644,9 @@ export default function ControlEvent() {
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Enrollment No</div>
-                    <div class="detail-value">${studentDetails.enrollmentNo}</div>
+                    <div class="detail-value">${
+                      studentDetails.enrollmentNo
+                    }</div>
                 </div>
                 <div class="divider"></div>
                 <div class="detail-row">
@@ -606,7 +657,7 @@ export default function ControlEvent() {
             
             <div class="ticket-qr">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
-                    `Event: ${event.title}\n` +
+                  `Event: ${event.title}\n` +
                     `Date: ${event.date}\n` +
                     `Time: ${event.time}\n` +
                     `Location: ${event.location}\n` +
@@ -628,21 +679,21 @@ export default function ControlEvent() {
 </html>
 `;
 
-// The rest of your code for generating and downloading the file remains the same
-const blob = new Blob([ticketHTML], { type: 'text/html' });
-const url = window.URL.createObjectURL(blob);
-const link = document.createElement('a');
-link.href = url;
-link.download = `ticket-${event.title}-${paymentId}.html`;
-document.body.appendChild(link);
-link.click();
-document.body.removeChild(link);
-window.URL.revokeObjectURL(url);
+    // The rest of your code for generating and downloading the file remains the same
+    const blob = new Blob([ticketHTML], { type: "text/html" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `ticket-${event.title}-${paymentId}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   };
 
   const handlePaymentSubmit = (e) => {
     e.preventDefault();
-    
+
     const studentDetails = {
       name: paymentForm.name || formData.name,
       email: paymentForm.email || formData.email,
@@ -650,7 +701,7 @@ window.URL.revokeObjectURL(url);
       program: paymentForm.program,
       academicYear: paymentForm.academicYear,
       semester: paymentForm.semester,
-      enrollmentNo: paymentForm.enrollmentNo
+      enrollmentNo: paymentForm.enrollmentNo,
     };
 
     const options = {
@@ -659,7 +710,7 @@ window.URL.revokeObjectURL(url);
       currency: "INR",
       name: "Event Ticket",
       description: `Ticket for ${selectedEvent.title}`,
-      handler: function(response) {
+      handler: function (response) {
         const newPayment = {
           id: Date.now().toString(),
           eventId: selectedEvent.id,
@@ -672,11 +723,15 @@ window.URL.revokeObjectURL(url);
           transactionId: response.razorpay_payment_id,
           date: new Date().toISOString(),
           organization: selectedEvent.createdBy,
-          studentDetails: studentDetails
+          studentDetails: studentDetails,
         };
 
         setPayments([...payments, newPayment]);
-        generateTicket(selectedEvent, response.razorpay_payment_id, studentDetails);
+        generateTicket(
+          selectedEvent,
+          response.razorpay_payment_id,
+          studentDetails
+        );
         setPaymentForm({
           name: "",
           email: "",
@@ -686,7 +741,7 @@ window.URL.revokeObjectURL(url);
           semester: "",
           enrollmentNo: "",
           paymentMethod: "razorpay",
-          transactionId: ""
+          transactionId: "",
         });
         setSelectedEvent(null);
         setShowPaymentForm(false);
@@ -694,11 +749,11 @@ window.URL.revokeObjectURL(url);
       },
       prefill: {
         name: studentDetails.name,
-        email: studentDetails.email
+        email: studentDetails.email,
       },
       theme: {
-        color: "#3399cc"
-      }
+        color: "#3399cc",
+      },
     };
 
     const razorpay = new window.Razorpay(options);
@@ -706,7 +761,7 @@ window.URL.revokeObjectURL(url);
   };
 
   const navigateToScanner = () => {
-    router.push('/scan-ticket');
+    router.push("/scan-ticket");
   };
 
   // Only render the UI on the client-side
@@ -724,13 +779,16 @@ window.URL.revokeObjectURL(url);
           {savedEvents.length > 0 ? (
             <div className="space-y-3">
               {savedEvents.map((event, index) => (
-                <div key={event.id} className="border p-3 rounded-lg relative group">
+                <div
+                  key={event.id}
+                  className="border p-3 rounded-lg relative group"
+                >
                   <h3 className="font-semibold">{event.organizationName}</h3>
                   <p className="text-sm">{event.eventName}</p>
                   <p className="text-xs text-gray-500">{event.role}</p>
 
                   <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button 
+                    <button
                       onClick={() => handleEditSavedEvent(index)}
                       className="text-blue-500 hover:text-blue-700 p-1"
                       title="Edit"
@@ -755,15 +813,21 @@ window.URL.revokeObjectURL(url);
 
         {/* Main Form */}
         <div className="w-3/4 m-3 px-3">
-          <h1 className="text-xl font-bold m-2 text-red-700">Event Registration Form</h1>
+          <h1 className="text-xl font-bold m-2 text-red-700">
+            Event Registration Form
+          </h1>
           <div className="mt-4 max-w-md mx-auto">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Select Your Role</label>
+                <label className="block text-sm font-medium mb-1">
+                  Select Your Role
+                </label>
                 <select
                   name="role"
                   value={formData.role}
-                  onChange={(e) => setFormData({...formData, role: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, role: e.target.value })
+                  }
                   className="w-full p-2 border rounded"
                   required
                 >
@@ -774,48 +838,67 @@ window.URL.revokeObjectURL(url);
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2 text-gray-700">Organization Name</label>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                  Organization Name
+                </label>
                 <input
                   type="text"
                   name="organizationName"
                   value={formData.organizationName}
-                  onChange={(e) => setFormData({...formData, organizationName: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      organizationName: e.target.value,
+                    })
+                  }
                   className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2 text-gray-700">Event Name</label>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                  Event Name
+                </label>
                 <input
                   type="text"
                   name="eventName"
                   value={formData.eventName}
-                  onChange={(e) => setFormData({...formData, eventName: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, eventName: e.target.value })
+                  }
                   className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2 text-gray-700">Your Name</label>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                  Your Name
+                </label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2 text-gray-700">Email</label>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                  Email
+                </label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                   required
                 />
@@ -826,7 +909,9 @@ window.URL.revokeObjectURL(url);
                 <select
                   name="gender"
                   value={formData.gender}
-                  onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, gender: e.target.value })
+                  }
                   className="w-full p-2 border rounded"
                   required
                 >
@@ -859,13 +944,16 @@ window.URL.revokeObjectURL(url);
         {savedEvents.length > 0 ? (
           <div className="space-y-3">
             {savedEvents.map((event, index) => (
-              <div key={event.id} className="border p-3 rounded-lg relative group">
+              <div
+                key={event.id}
+                className="border p-3 rounded-lg relative group"
+              >
                 <h3 className="font-semibold">{event.organizationName}</h3>
                 <p className="text-sm">{event.eventName}</p>
                 <p className="text-xs text-gray-500">{event.role}</p>
 
                 <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button 
+                  <button
                     onClick={() => handleEditSavedEvent(index)}
                     className="text-blue-500 hover:text-blue-700 p-1"
                     title="Edit"
@@ -904,11 +992,11 @@ window.URL.revokeObjectURL(url);
 
         <div className="mb-4 p-4 bg-gray-100 rounded">
           <h2 className="font-semibold">Welcome, {formData.name}!</h2>
-          <p>Role: {formData.role === 'admin' ? 'Administrator' : 'User'}</p>
+          <p>Role: {formData.role === "admin" ? "Administrator" : "User"}</p>
           <p>Email: {formData.email}</p>
         </div>
 
-        {formData.role === 'admin' ? (
+        {formData.role === "admin" ? (
           <Tabs defaultValue="admin" className="w-full">
             <TabsList>
               <TabsTrigger value="admin">Admin</TabsTrigger>
@@ -923,7 +1011,9 @@ window.URL.revokeObjectURL(url);
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                   <div className="border rounded p-4">
                     <h3 className="font-medium">Total Events</h3>
-                    <p className="text-2xl font-bold">{getOrganizationEvents().length}</p>
+                    <p className="text-2xl font-bold">
+                      {getOrganizationEvents().length}
+                    </p>
                   </div>
                   <div className="border rounded p-4">
                     <h3 className="font-medium">Total Volunteers</h3>
@@ -934,8 +1024,13 @@ window.URL.revokeObjectURL(url);
                     <p className="text-2xl font-bold flex items-center">
                       <IndianRupee size={20} className="mr-1" />
                       {payments
-                        .filter(p => p.organization === formData.organizationName)
-                        .reduce((sum, payment) => sum + Number(payment.amount), 0)}
+                        .filter(
+                          (p) => p.organization === formData.organizationName
+                        )
+                        .reduce(
+                          (sum, payment) => sum + Number(payment.amount),
+                          0
+                        )}
                     </p>
                   </div>
                 </div>
@@ -946,8 +1041,10 @@ window.URL.revokeObjectURL(url);
             <TabsContent value="volunteer">
               <div className="p-4 border rounded mt-4">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-semibold">Volunteer Management</h2>
-                  <button 
+                  <h2 className="text-lg font-semibold">
+                    Volunteer Management
+                  </h2>
+                  <button
                     onClick={() => setShowVolunteerForm(true)}
                     className="flex items-center gap-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors"
                   >
@@ -961,65 +1058,106 @@ window.URL.revokeObjectURL(url);
                     <div className="bg-white p-6 rounded-lg w-full max-w-md">
                       <div className="flex justify-between items-center mb-4">
                         <h3 className="text-xl font-bold">
-                          {editingVolunteerIndex !== null ? "Edit Member" : "Add Member"}
+                          {editingVolunteerIndex !== null
+                            ? "Edit Member"
+                            : "Add Member"}
                         </h3>
-                        <button 
+                        <button
                           onClick={() => setShowVolunteerForm(false)}
                           className="text-gray-500 hover:text-gray-700"
                         >
                           <X size={24} />
                         </button>
                       </div>
-                      <form onSubmit={handleVolunteerSubmit} className="space-y-4">
+                      <form
+                        onSubmit={handleVolunteerSubmit}
+                        className="space-y-4"
+                      >
                         <div>
-                          <label className="block text-sm font-semibold mb-2 text-gray-700">Name</label>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">
+                            Name
+                          </label>
                           <input
                             type="text"
                             name="name"
                             value={volunteerForm.name}
-                            onChange={(e) => setVolunteerForm({...volunteerForm, name: e.target.value})}
+                            onChange={(e) =>
+                              setVolunteerForm({
+                                ...volunteerForm,
+                                name: e.target.value,
+                              })
+                            }
                             className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                             required
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-semibold mb-2 text-gray-700">Email</label>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">
+                            Email
+                          </label>
                           <input
                             type="email"
                             name="email"
                             value={volunteerForm.email}
-                            onChange={(e) => setVolunteerForm({...volunteerForm, email: e.target.value})}
+                            onChange={(e) =>
+                              setVolunteerForm({
+                                ...volunteerForm,
+                                email: e.target.value,
+                              })
+                            }
                             className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                             required
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-semibold mb-2 text-gray-700">ID/Roll Number</label>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">
+                            ID/Roll Number
+                          </label>
                           <input
                             type="text"
                             name="id"
                             value={volunteerForm.id}
-                            onChange={(e) => setVolunteerForm({...volunteerForm, id: e.target.value})}
+                            onChange={(e) =>
+                              setVolunteerForm({
+                                ...volunteerForm,
+                                id: e.target.value,
+                              })
+                            }
                             className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                             required
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium mb-1">Post</label>
+                          <label className="block text-sm font-medium mb-1">
+                            Post
+                          </label>
                           <select
                             name="post"
                             value={volunteerForm.post}
-                            onChange={(e) => setVolunteerForm({...volunteerForm, post: e.target.value})}
+                            onChange={(e) =>
+                              setVolunteerForm({
+                                ...volunteerForm,
+                                post: e.target.value,
+                              })
+                            }
                             className="w-full p-2 border rounded"
                             required
                           >
-                            <option value="event coordinator">Event Coordinator</option>
-                            <option value="vice event coordinator">Vice Event Coordinator</option>
-                            <option value="discipline head">Discipline Head</option>
-                            <option value="photography & media head">Photography & Media Head</option>
+                            <option value="event coordinator">
+                              Event Coordinator
+                            </option>
+                            <option value="vice event coordinator">
+                              Vice Event Coordinator
+                            </option>
+                            <option value="discipline head">
+                              Discipline Head
+                            </option>
+                            <option value="photography & media head">
+                              Photography & Media Head
+                            </option>
                             <option value="volunteer">Volunteer</option>
                             <option value="other">Other</option>
                           </select>
@@ -1027,12 +1165,19 @@ window.URL.revokeObjectURL(url);
 
                         {volunteerForm.post === "other" && (
                           <div>
-                            <label className="block text-sm font-semibold mb-2 text-gray-700">Specify Post</label>
+                            <label className="block text-sm font-semibold mb-2 text-gray-700">
+                              Specify Post
+                            </label>
                             <input
                               type="text"
                               name="customPost"
                               value={volunteerForm.customPost}
-                              onChange={(e) => setVolunteerForm({...volunteerForm, customPost: e.target.value})}
+                              onChange={(e) =>
+                                setVolunteerForm({
+                                  ...volunteerForm,
+                                  customPost: e.target.value,
+                                })
+                              }
                               className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                               required
                             />
@@ -1051,7 +1196,9 @@ window.URL.revokeObjectURL(url);
                             type="submit"
                             className="bg-green-500 text-white px-6 py-3 rounded-xl hover:bg-green-600 transition-all transform hover:scale-105 font-medium shadow-md hover:shadow-lg"
                           >
-                            {editingVolunteerIndex !== null ? "Update" : "Submit"}
+                            {editingVolunteerIndex !== null
+                              ? "Update"
+                              : "Submit"}
                           </button>
                         </div>
                       </form>
@@ -1075,13 +1222,19 @@ window.URL.revokeObjectURL(url);
                       <tbody>
                         {volunteers.map((volunteer, index) => (
                           <tr key={index} className="hover:bg-gray-50">
-                            <td className="py-2 px-4 border">{volunteer.name}</td>
-                            <td className="py-2 px-4 border">{volunteer.email}</td>
+                            <td className="py-2 px-4 border">
+                              {volunteer.name}
+                            </td>
+                            <td className="py-2 px-4 border">
+                              {volunteer.email}
+                            </td>
                             <td className="py-2 px-4 border">{volunteer.id}</td>
-                            <td className="py-2 px-4 border capitalize">{volunteer.post}</td>
+                            <td className="py-2 px-4 border capitalize">
+                              {volunteer.post}
+                            </td>
                             <td className="py-2 px-4 border">
                               <div className="flex gap-2 justify-center">
-                                <button 
+                                <button
                                   onClick={() => handleEditVolunteer(index)}
                                   className="text-blue-500 hover:text-blue-700"
                                   title="Edit"
@@ -1103,7 +1256,9 @@ window.URL.revokeObjectURL(url);
                     </table>
                   </div>
                 ) : (
-                  <p className="text-center py-4 text-gray-500">No volunteers added yet</p>
+                  <p className="text-center py-4 text-gray-500">
+                    No volunteers added yet
+                  </p>
                 )}
               </div>
             </TabsContent>
@@ -1113,7 +1268,7 @@ window.URL.revokeObjectURL(url);
               <div className="p-4 border rounded mt-4">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-lg font-semibold">Event Management</h2>
-                  <button 
+                  <button
                     onClick={() => setShowEventForm(true)}
                     className="flex items-center gap-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors"
                   >
@@ -1127,9 +1282,11 @@ window.URL.revokeObjectURL(url);
                     <div className="bg-white p-6 rounded-lg w-full max-w-md my-8 relative max-h-[90vh] overflow-y-auto">
                       <div className="flex justify-between items-center mb-4">
                         <h3 className="text-xl font-bold">
-                          {editingEventIndex !== null ? "Edit Event" : "Add Event"}
+                          {editingEventIndex !== null
+                            ? "Edit Event"
+                            : "Add Event"}
                         </h3>
-                        <button 
+                        <button
                           onClick={() => setShowEventForm(false)}
                           className="text-gray-500 hover:text-gray-700"
                         >
@@ -1138,23 +1295,37 @@ window.URL.revokeObjectURL(url);
                       </div>
                       <form onSubmit={handleEventSubmit} className="space-y-4">
                         <div>
-                          <label className="block text-sm font-semibold mb-2 text-gray-700">Event Title</label>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">
+                            Event Title
+                          </label>
                           <input
                             type="text"
                             name="title"
                             value={eventForm.title}
-                            onChange={(e) => setEventForm({...eventForm, title: e.target.value})}
+                            onChange={(e) =>
+                              setEventForm({
+                                ...eventForm,
+                                title: e.target.value,
+                              })
+                            }
                             className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                             required
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-semibold mb-2 text-gray-700">Description</label>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">
+                            Description
+                          </label>
                           <textarea
                             name="description"
                             value={eventForm.description}
-                            onChange={(e) => setEventForm({...eventForm, description: e.target.value})}
+                            onChange={(e) =>
+                              setEventForm({
+                                ...eventForm,
+                                description: e.target.value,
+                              })
+                            }
                             className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                             rows="3"
                             required
@@ -1163,24 +1334,38 @@ window.URL.revokeObjectURL(url);
 
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-semibold mb-2 text-gray-700">Date</label>
+                            <label className="block text-sm font-semibold mb-2 text-gray-700">
+                              Date
+                            </label>
                             <input
                               type="date"
                               name="date"
                               value={eventForm.date}
-                              onChange={(e) => setEventForm({...eventForm, date: e.target.value})}
+                              onChange={(e) =>
+                                setEventForm({
+                                  ...eventForm,
+                                  date: e.target.value,
+                                })
+                              }
                               className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                               required
                             />
                           </div>
 
                           <div>
-                            <label className="block text-sm font-semibold mb-2 text-gray-700">Time</label>
+                            <label className="block text-sm font-semibold mb-2 text-gray-700">
+                              Time
+                            </label>
                             <input
                               type="time"
                               name="time"
                               value={eventForm.time}
-                              onChange={(e) => setEventForm({...eventForm, time: e.target.value})}
+                              onChange={(e) =>
+                                setEventForm({
+                                  ...eventForm,
+                                  time: e.target.value,
+                                })
+                              }
                               className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                               required
                             />
@@ -1188,24 +1373,38 @@ window.URL.revokeObjectURL(url);
                         </div>
 
                         <div>
-                          <label className="block text-sm font-semibold mb-2 text-gray-700">Location</label>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">
+                            Location
+                          </label>
                           <input
                             type="text"
                             name="location"
                             value={eventForm.location}
-                            onChange={(e) => setEventForm({...eventForm, location: e.target.value})}
+                            onChange={(e) =>
+                              setEventForm({
+                                ...eventForm,
+                                location: e.target.value,
+                              })
+                            }
                             className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                             required
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-semibold mb-2 text-gray-700">Ticket Price (₹)</label>
+                          <label className="block text-sm font-semibold mb-2 text-gray-700">
+                            Ticket Price (₹)
+                          </label>
                           <input
                             type="number"
                             name="ticketPrice"
                             value={eventForm.ticketPrice || ""}
-                            onChange={(e) => setEventForm({...eventForm, ticketPrice: e.target.value})}
+                            onChange={(e) =>
+                              setEventForm({
+                                ...eventForm,
+                                ticketPrice: e.target.value,
+                              })
+                            }
                             className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                             min="0"
                           />
@@ -1228,32 +1427,36 @@ window.URL.revokeObjectURL(url);
                               />
                             </label>
                             {eventForm.media && (
-                              <span className="text-sm">{eventForm.media.name}</span>
+                              <span className="text-sm">
+                                {eventForm.media.name}
+                              </span>
                             )}
                           </div>
                           {eventForm.mediaPreview && (
                             <div className="mt-2">
-                              {eventForm.mediaType === 'image' ? (
-                                <img 
-                                  src={eventForm.mediaPreview} 
-                                  alt="Preview" 
+                              {eventForm.mediaType === "image" ? (
+                                <img
+                                  src={eventForm.mediaPreview}
+                                  alt="Preview"
                                   className="max-h-40 rounded"
                                 />
                               ) : (
-                                <video 
-                                  src={eventForm.mediaPreview} 
-                                  controls 
+                                <video
+                                  src={eventForm.mediaPreview}
+                                  controls
                                   className="max-h-40 rounded"
                                 />
                               )}
                               <button
                                 type="button"
-                                onClick={() => setEventForm({
-                                  ...eventForm,
-                                  media: null,
-                                  mediaType: "",
-                                  mediaPreview: ""
-                                })}
+                                onClick={() =>
+                                  setEventForm({
+                                    ...eventForm,
+                                    media: null,
+                                    mediaType: "",
+                                    mediaPreview: "",
+                                  })
+                                }
                                 className="text-red-500 text-sm mt-1 hover:text-red-700"
                               >
                                 Remove
@@ -1279,23 +1482,27 @@ window.URL.revokeObjectURL(url);
                               />
                             </label>
                             {eventForm.ticketDesign && (
-                              <span className="text-sm">{eventForm.ticketDesign.name}</span>
+                              <span className="text-sm">
+                                {eventForm.ticketDesign.name}
+                              </span>
                             )}
                           </div>
                           {eventForm.ticketDesignPreview && (
                             <div className="mt-2">
-                              <img 
-                                src={eventForm.ticketDesignPreview} 
-                                alt="Ticket Design Preview" 
+                              <img
+                                src={eventForm.ticketDesignPreview}
+                                alt="Ticket Design Preview"
                                 className="max-h-40 rounded"
                               />
                               <button
                                 type="button"
-                                onClick={() => setEventForm({
-                                  ...eventForm,
-                                  ticketDesign: null,
-                                  ticketDesignPreview: ""
-                                })}
+                                onClick={() =>
+                                  setEventForm({
+                                    ...eventForm,
+                                    ticketDesign: null,
+                                    ticketDesignPreview: "",
+                                  })
+                                }
                                 className="text-red-500 text-sm mt-1 hover:text-red-700"
                               >
                                 Remove
@@ -1328,9 +1535,12 @@ window.URL.revokeObjectURL(url);
                 {getOrganizationEvents().length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {getOrganizationEvents().map((event, index) => (
-                      <div key={event.id} className="border rounded p-4 relative group hover:shadow-md transition-shadow">
+                      <div
+                        key={event.id}
+                        className="border rounded p-4 relative group hover:shadow-md transition-shadow"
+                      >
                         <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button 
+                          <button
                             onClick={() => {
                               setEventForm({
                                 title: event.title,
@@ -1343,7 +1553,8 @@ window.URL.revokeObjectURL(url);
                                 mediaPreview: event.media?.preview || "",
                                 ticketPrice: event.ticketPrice || "",
                                 ticketDesign: event.ticketDesign,
-                                ticketDesignPreview: event.ticketDesign?.preview || ""
+                                ticketDesignPreview:
+                                  event.ticketDesign?.preview || "",
                               });
                               setEditingEventIndex(index);
                               setShowEventForm(true);
@@ -1361,29 +1572,45 @@ window.URL.revokeObjectURL(url);
                             <Trash2 size={16} />
                           </button>
                         </div>
-                        <h3 className="font-bold text-lg mb-2">{event.title}</h3>
-                        <p className="text-gray-600 mb-3">{event.description}</p>
+                        <h3 className="font-bold text-lg mb-2">
+                          {event.title}
+                        </h3>
+                        <p className="text-gray-600 mb-3">
+                          {event.description}
+                        </p>
                         <div className="text-sm">
-                          <p><span className="font-medium">Date:</span> {event.date}</p>
-                          <p><span className="font-medium">Time:</span> {event.time}</p>
-                          <p><span className="font-medium">Location:</span> {event.location}</p>
+                          <p>
+                            <span className="font-medium">Date:</span>{" "}
+                            {event.date}
+                          </p>
+                          <p>
+                            <span className="font-medium">Time:</span>{" "}
+                            {event.time}
+                          </p>
+                          <p>
+                            <span className="font-medium">Location:</span>{" "}
+                            {event.location}
+                          </p>
                           {event.ticketPrice && (
-                            <p><span className="font-medium">Ticket Price:</span> ₹{event.ticketPrice}</p>
+                            <p>
+                              <span className="font-medium">Ticket Price:</span>{" "}
+                              ₹{event.ticketPrice}
+                            </p>
                           )}
                         </div>
                         {event.media?.preview && (
                           <div className="mt-3">
                             <h4 className="font-medium mb-2">Event Media:</h4>
-                            {event.media.type === 'image' ? (
-                              <img 
-                                src={event.media.preview} 
-                                alt="Event media" 
+                            {event.media.type === "image" ? (
+                              <img
+                                src={event.media.preview}
+                                alt="Event media"
                                 className="w-full h-auto rounded"
                               />
                             ) : (
-                              <video 
-                                src={event.media.preview} 
-                                controls 
+                              <video
+                                src={event.media.preview}
+                                controls
                                 className="w-full h-auto rounded"
                               />
                             )}
@@ -1392,9 +1619,9 @@ window.URL.revokeObjectURL(url);
                         {event.ticketDesign?.preview && (
                           <div className="mt-3 border-t pt-3">
                             <h4 className="font-medium mb-2">Ticket Design:</h4>
-                            <img 
-                              src={event.ticketDesign.preview} 
-                              alt="Ticket Design" 
+                            <img
+                              src={event.ticketDesign.preview}
+                              alt="Ticket Design"
                               className="w-full h-auto rounded border"
                             />
                           </div>
@@ -1403,7 +1630,9 @@ window.URL.revokeObjectURL(url);
                     ))}
                   </div>
                 ) : (
-                  <p className="text-center py-4 text-gray-500">No events added yet</p>
+                  <p className="text-center py-4 text-gray-500">
+                    No events added yet
+                  </p>
                 )}
               </div>
             </TabsContent>
@@ -1412,17 +1641,32 @@ window.URL.revokeObjectURL(url);
           <div className="p-4 border rounded mt-4">
             {showPaymentForm && selectedEvent ? (
               <div>
-                <h2 className="text-lg font-semibold mb-4">Purchase Ticket for {selectedEvent.title}</h2>
+                <h2 className="text-lg font-semibold mb-4">
+                  Purchase Ticket for {selectedEvent.title}
+                </h2>
 
                 <div className="mb-6 border rounded p-4">
-                  <h3 className="font-bold text-lg mb-2">{selectedEvent.title}</h3>
-                  <p className="text-gray-600 mb-3">{selectedEvent.description}</p>
+                  <h3 className="font-bold text-lg mb-2">
+                    {selectedEvent.title}
+                  </h3>
+                  <p className="text-gray-600 mb-3">
+                    {selectedEvent.description}
+                  </p>
                   <div className="text-sm">
-                    <p><span className="font-medium">Date:</span> {selectedEvent.date}</p>
-                    <p><span className="font-medium">Time:</span> {selectedEvent.time}</p>
-                    <p><span className="font-medium">Location:</span> {selectedEvent.location}</p>
+                    <p>
+                      <span className="font-medium">Date:</span>{" "}
+                      {selectedEvent.date}
+                    </p>
+                    <p>
+                      <span className="font-medium">Time:</span>{" "}
+                      {selectedEvent.time}
+                    </p>
+                    <p>
+                      <span className="font-medium">Location:</span>{" "}
+                      {selectedEvent.location}
+                    </p>
                     <p className="flex items-center">
-                      <span className="font-medium">Ticket Price:</span> 
+                      <span className="font-medium">Ticket Price:</span>
                       <IndianRupee size={16} className="mx-1" />
                       {selectedEvent.ticketPrice}
                     </p>
@@ -1431,84 +1675,130 @@ window.URL.revokeObjectURL(url);
 
                 <form onSubmit={handlePaymentSubmit} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-700">Your Name</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">
+                      Your Name
+                    </label>
                     <input
                       type="text"
                       name="name"
                       value={paymentForm.name || formData.name || ""}
-                      onChange={(e) => setPaymentForm({...paymentForm, name: e.target.value})}
+                      onChange={(e) =>
+                        setPaymentForm({ ...paymentForm, name: e.target.value })
+                      }
                       className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-700">Your Email</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">
+                      Your Email
+                    </label>
                     <input
                       type="email"
                       name="email"
                       value={paymentForm.email || formData.email}
-                      onChange={(e) => setPaymentForm({...paymentForm, email: e.target.value})}
+                      onChange={(e) =>
+                        setPaymentForm({
+                          ...paymentForm,
+                          email: e.target.value,
+                        })
+                      }
                       className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-700">Branch</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">
+                      Branch
+                    </label>
                     <input
                       type="text"
                       name="branch"
                       value={paymentForm.branch}
-                      onChange={(e) => setPaymentForm({...paymentForm, branch: e.target.value})}
+                      onChange={(e) =>
+                        setPaymentForm({
+                          ...paymentForm,
+                          branch: e.target.value,
+                        })
+                      }
                       className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-700">Program</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">
+                      Program
+                    </label>
                     <input
                       type="text"
                       name="program"
                       value={paymentForm.program}
-                      onChange={(e) => setPaymentForm({...paymentForm, program: e.target.value})}
+                      onChange={(e) =>
+                        setPaymentForm({
+                          ...paymentForm,
+                          program: e.target.value,
+                        })
+                      }
                       className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-700">Academic Year</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">
+                      Academic Year
+                    </label>
                     <input
                       type="text"
                       name="academicYear"
                       value={paymentForm.academicYear}
-                      onChange={(e) => setPaymentForm({...paymentForm, academicYear: e.target.value})}
+                      onChange={(e) =>
+                        setPaymentForm({
+                          ...paymentForm,
+                          academicYear: e.target.value,
+                        })
+                      }
                       className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-700">Semester</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">
+                      Semester
+                    </label>
                     <input
                       type="text"
                       name="semester"
                       value={paymentForm.semester}
-                      onChange={(e) => setPaymentForm({...paymentForm, semester: e.target.value})}
+                      onChange={(e) =>
+                        setPaymentForm({
+                          ...paymentForm,
+                          semester: e.target.value,
+                        })
+                      }
                       className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-700">Enrollment No</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">
+                      Enrollment No
+                    </label>
                     <input
                       type="text"
                       name="enrollmentNo"
                       value={paymentForm.enrollmentNo}
-                      onChange={(e) => setPaymentForm({...paymentForm, enrollmentNo: e.target.value})}
+                      onChange={(e) =>
+                        setPaymentForm({
+                          ...paymentForm,
+                          enrollmentNo: e.target.value,
+                        })
+                      }
                       className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white shadow-sm hover:border-blue-400 placeholder-gray-400"
                       required
                     />
@@ -1554,17 +1844,36 @@ window.URL.revokeObjectURL(url);
                 {getFilteredEvents().length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {getFilteredEvents().map((event, index) => (
-                      <div key={event.id} className="border rounded p-4 hover:shadow-md transition-shadow">
-                        <h3 className="font-bold text-lg mb-2">{event.title}</h3>
-                        <p className="text-gray-600 mb-3 line-clamp-2">{event.description}</p>
+                      <div
+                        key={event.id}
+                        className="border rounded p-4 hover:shadow-md transition-shadow"
+                      >
+                        <h3 className="font-bold text-lg mb-2">
+                          {event.title}
+                        </h3>
+                        <p className="text-gray-600 mb-3 line-clamp-2">
+                          {event.description}
+                        </p>
                         <div className="text-sm mb-3">
-                          <p><span className="font-medium">Date:</span> {event.date}</p>
-                          <p><span className="font-medium">Time:</span> {event.time}</p>
-                          <p><span className="font-medium">Location:</span> {event.location}</p>
-                          <p><span className="font-medium">Organizer:</span> {event.createdBy}</p>
+                          <p>
+                            <span className="font-medium">Date:</span>{" "}
+                            {event.date}
+                          </p>
+                          <p>
+                            <span className="font-medium">Time:</span>{" "}
+                            {event.time}
+                          </p>
+                          <p>
+                            <span className="font-medium">Location:</span>{" "}
+                            {event.location}
+                          </p>
+                          <p>
+                            <span className="font-medium">Organizer:</span>{" "}
+                            {event.createdBy}
+                          </p>
                           {event.ticketPrice && (
                             <p className="flex items-center">
-                              <span className="font-medium">Ticket Price:</span> 
+                              <span className="font-medium">Ticket Price:</span>
                               <IndianRupee size={16} className="mx-1" />
                               {event.ticketPrice}
                             </p>
@@ -1572,16 +1881,16 @@ window.URL.revokeObjectURL(url);
                         </div>
                         {event.media?.preview && (
                           <div className="mb-3">
-                            {event.media.type === 'image' ? (
-                              <img 
-                                src={event.media.preview} 
-                                alt="Event media" 
+                            {event.media.type === "image" ? (
+                              <img
+                                src={event.media.preview}
+                                alt="Event media"
                                 className="w-full h-auto rounded"
                               />
                             ) : (
-                              <video 
-                                src={event.media.preview} 
-                                controls 
+                              <video
+                                src={event.media.preview}
+                                controls
                                 className="w-full h-auto rounded"
                               />
                             )}
@@ -1602,7 +1911,9 @@ window.URL.revokeObjectURL(url);
                     ))}
                   </div>
                 ) : (
-                  <p className="text-center py-4 text-gray-500">No events found</p>
+                  <p className="text-center py-4 text-gray-500">
+                    No events found
+                  </p>
                 )}
 
                 {/* User's Tickets Section */}
@@ -1613,7 +1924,10 @@ window.URL.revokeObjectURL(url);
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {getUserTickets().map((ticket, index) => (
-                        <div key={index} className="border rounded p-4 bg-gray-50 relative group">
+                        <div
+                          key={index}
+                          className="border rounded p-4 bg-gray-50 relative group"
+                        >
                           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
                               onClick={() => handleDeleteTicket(ticket.id)}
@@ -1623,13 +1937,34 @@ window.URL.revokeObjectURL(url);
                               <Trash2 size={16} />
                             </button>
                           </div>
-                          <h3 className="font-bold text-lg mb-2">{ticket.eventTitle}</h3>
+                          <h3 className="font-bold text-lg mb-2">
+                            {ticket.eventTitle}
+                          </h3>
                           <div className="text-sm">
-                            <p><span className="font-medium">Amount:</span> ₹{ticket.amount}</p>
-                            <p><span className="font-medium">Payment Method:</span> {ticket.paymentMethod.replace('_', ' ')}</p>
-                            <p><span className="font-medium">Transaction ID:</span> {ticket.transactionId}</p>
-                            <p><span className="font-medium">Date:</span> {new Date(ticket.date).toLocaleString()}</p>
-                            <p><span className="font-medium">Organizer:</span> {ticket.organization}</p>
+                            <p>
+                              <span className="font-medium">Amount:</span> ₹
+                              {ticket.amount}
+                            </p>
+                            <p>
+                              <span className="font-medium">
+                                Payment Method:
+                              </span>{" "}
+                              {ticket.paymentMethod.replace("_", " ")}
+                            </p>
+                            <p>
+                              <span className="font-medium">
+                                Transaction ID:
+                              </span>{" "}
+                              {ticket.transactionId}
+                            </p>
+                            <p>
+                              <span className="font-medium">Date:</span>{" "}
+                              {new Date(ticket.date).toLocaleString()}
+                            </p>
+                            <p>
+                              <span className="font-medium">Organizer:</span>{" "}
+                              {ticket.organization}
+                            </p>
                           </div>
                         </div>
                       ))}
