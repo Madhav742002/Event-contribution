@@ -207,42 +207,42 @@ export default function ControlEvent() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const userId = Date.now().toString();
-  const newEvent = {
-    ...formData,
-    id: userId,
-    userId: userId,
-  };
+    const userId = Date.now().toString();
+    const newEvent = {
+      ...formData,
+      id: userId,
+      userId: userId,
+    };
 
-  try {
-    const response = await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newEvent),
-    });
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newEvent),
+      });
 
-    const result = await response.json();
-    console.log("API Response:", result);
+      const result = await response.json();
+      console.log("API Response:", result);
 
-    if (response.ok) {
-      if (result.message === "Event already exists, opening instead!") {
-        alert("This event already exists! Redirecting...");
-        setSubmitted(true);
-        // Open the event (custom logic can be added here)
+      if (response.ok) {
+        if (result.message === "Event already exists, opening instead!") {
+          alert("This event already exists! Redirecting...");
+          setSubmitted(true);
+          // Open the event (custom logic can be added here)
+        } else {
+          setSavedEvents((prev) => [...prev, newEvent]);
+          setFormData((prev) => ({ ...prev, userId }));
+          setSubmitted(true);
+        }
       } else {
-        setSavedEvents((prev) => [...prev, newEvent]);
-        setFormData((prev) => ({ ...prev, userId }));
-        setSubmitted(true);
+        console.error("Failed to register event:", result.error);
       }
-    } else {
-      console.error("Failed to register event:", result.error);
+    } catch (error) {
+      console.error("Error:", error);
     }
-  } catch (error) {
-    console.error("Error:", error);
-  }
-};
+  };
 
   const handleEditSavedEvent = (index) => {
     const eventToEdit = savedEvents[index];
@@ -271,8 +271,9 @@ export default function ControlEvent() {
     }
   };
 
-  const handleVolunteerSubmit = (e) => {
+  const handleVolunteerSubmit = async (e) => {
     e.preventDefault();
+
     const newVolunteer = {
       ...volunteerForm,
       post:
@@ -281,23 +282,30 @@ export default function ControlEvent() {
           : volunteerForm.post,
     };
 
-    if (editingVolunteerIndex !== null) {
-      const updatedVolunteers = [...volunteers];
-      updatedVolunteers[editingVolunteerIndex] = newVolunteer;
-      setVolunteers(updatedVolunteers);
-    } else {
-      setVolunteers([...volunteers, newVolunteer]);
-    }
+    try {
+      const response = await fetch("/api/volunteer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newVolunteer),
+      });
 
-    setVolunteerForm({
-      name: "",
-      email: "",
-      id: "",
-      post: "volunteer",
-      customPost: "",
-    });
-    setShowVolunteerForm(false);
-    setEditingVolunteerIndex(null);
+      const result = await response.json();
+      console.log("API Response:", result);
+
+      if (response.ok) {
+        if (result.message === "Volunteer already exists!") {
+          alert("Volunteer already exists! Loading data...");
+          setVolunteerForm(result.volunteer); // Prefill form with existing data
+        } else {
+          setVolunteers([...volunteers, newVolunteer]);
+        }
+        setShowVolunteerForm(false);
+      } else {
+        console.error("Failed to register volunteer:", result.error);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   const handleEditVolunteer = (index) => {
@@ -1455,52 +1463,6 @@ export default function ControlEvent() {
                                     media: null,
                                     mediaType: "",
                                     mediaPreview: "",
-                                  })
-                                }
-                                className="text-red-500 text-sm mt-1 hover:text-red-700"
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Ticket Design Upload */}
-                        <div>
-                          <label className="block text-sm font-medium mb-1">
-                            Upload Ticket Design (Image)
-                          </label>
-                          <div className="flex items-center gap-2">
-                            <label className="flex items-center gap-2 border rounded p-2 cursor-pointer hover:bg-gray-100 transition-colors">
-                              <Upload size={16} />
-                              <span>Choose Design</span>
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleTicketDesignUpload}
-                                className="hidden"
-                              />
-                            </label>
-                            {eventForm.ticketDesign && (
-                              <span className="text-sm">
-                                {eventForm.ticketDesign.name}
-                              </span>
-                            )}
-                          </div>
-                          {eventForm.ticketDesignPreview && (
-                            <div className="mt-2">
-                              <img
-                                src={eventForm.ticketDesignPreview}
-                                alt="Ticket Design Preview"
-                                className="max-h-40 rounded"
-                              />
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setEventForm({
-                                    ...eventForm,
-                                    ticketDesign: null,
-                                    ticketDesignPreview: "",
                                   })
                                 }
                                 className="text-red-500 text-sm mt-1 hover:text-red-700"
