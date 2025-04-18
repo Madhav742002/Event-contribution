@@ -11,7 +11,7 @@ export default function Header() {
   const { isSignedIn, isLoaded } = useUser(); // Get authentication state
 
   return (
-    <nav className="bg-gradient-to-r from-blue-500 to-purple-600 p-3">
+    <nav className="bg-zinc-800 rounded-b-lg shadow-b-lg shadow-lg p-3">
       <div className="flex justify-between items-center">
         {/* Logo */}
         <h1 className="text-2xl font-extrabold text-white">
