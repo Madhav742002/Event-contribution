@@ -57,8 +57,8 @@ export default function Header() {
         </div>
 
         {/* Mobile Menu Button */}
-        <button className="md:hidden p-2" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X size={28} /> : <TiThMenuOutline size={28} />}
+        <button className="md:hidden p-2 text-white" onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? <X size={28} /> : <TiThMenuOutline size={28} className="text-white" />}
         </button>
       </div>
 

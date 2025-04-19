@@ -1,23 +1,79 @@
 "use client";
 import "animate.css";
-import type { Metadata } from "next";
 import Footer from "./component/footer";
 import Team from "./component/team";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import ChatBot from "@/components/ui/Chatbot";
-import { useEffect, useRef } from "react";
-import * as anime from "animejs";
+import * as React from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Card, CardContent } from "@/components/ui/card";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 
 export default function Home() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
+    Autoplay({ delay: 3000, stopOnInteraction: false })
+  ]);
+
+  const cardData = [
+    {
+      number: 1,
+      title: "Control Event",
+      description: "Set up your event details and requirements",
+    },
+    {
+      number: 2,
+      title: "Add Members",
+      description: "Invite team members and assign roles",
+    },
+    {
+      number: 3,
+      title: "Manage Funds",
+      description: "Track and manage event finances",
+    },
+    {
+      number: 4,
+      title: "Track Progress",
+      description: "Monitor event progress in real-time",
+    },
+    {
+      number: 5,
+      title: "Celebrate Success",
+      description: "Enjoy and review your event's success",
+    },
+  ];
+
   return (
     <div className="min-h-screen">
       <ChatBot />
       {/* Hero Section */}
-      <section className="m-2 rounded-lg shadow-lg shadow-black bg-hero-pattern bg-cover bg-center text-white py-12 md:py-20">
-        <div className="container mx-auto px-4 md:px-6 text-center">
-          <h1 className="text-shadow-lg text-3xl md:text-5xl font-bold mb-4">
-            Welcome to E-collection
+      <section className="relative m-2 rounded-lg overflow-hidden text-white py-12 md:py-20">
+        {/* Video Background */}
+        <video
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src="/analyze.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+
+        {/* Overlay to darken video for better text contrast */}
+        <div className="absolute inset-0 bg-black bg-opacity-50 z-10" />
+
+        {/* Foreground Content */}
+        <div className="relative z-20 container mx-auto px-4 md:px-6 text-center">
+          <h1 className="text-shadow-lg text-3xl  md:text-5xl font-bold mb-4">
+            Welcome to <span className="text-5xl font-extrabold text-yellow-500">EVENTIFY</span>
           </h1>
           <p className="text-lg md:text-xl mb-8">
             Manage your events efficiently and effectively
@@ -235,43 +291,47 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            <div className="p-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
-                1
+      <section className="relative py-16 overflow-hidden">
+        {/* Video Background */}
+        <video
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src="/party_video.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/60 z-10" />
+
+        {/* Content */}
+        <div className="relative z-20 container mx-auto px-6">
+          <h2 className="text-3xl font-bold text-center text-white mb-12">
+            How It Works
+          </h2>
+
+          <div className="flex justify-center">
+            <div className="embla" ref={emblaRef}>
+              <div className="embla__container">
+                {cardData.map((item, index) => (
+                  <div className="embla__slide" key={index}>
+                    <Card>
+                      <CardContent className="flex flex-col items-center justify-center text-center p-6 bg-gray-800/80 rounded-lg">
+                        <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
+                          {item.number}
+                        </div>
+                        <h3 className="text-xl font-semibold text-white mb-2">
+                          {item.title}
+                        </h3>
+                        <p className="text-white">{item.description}</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
               </div>
-              <h3 className="text-xl font-semibold mb-2">Create Event</h3>
-              <p className="text-gray-600">
-                Set up your event details and requirements
-              </p>
-            </div>
-            <div className="p-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
-                2
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Add Members</h3>
-              <p className="text-gray-600">
-                Invite team members and assign roles
-              </p>
-            </div>
-            <div className="p-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
-                3
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Manage Funds</h3>
-              <p className="text-gray-600">Track and manage event finances</p>
-            </div>
-            <div className="p-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
-                4
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Track Progress</h3>
-              <p className="text-gray-600">
-                Monitor event progress in real-time
-              </p>
             </div>
           </div>
         </div>

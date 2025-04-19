@@ -1,7 +1,7 @@
 import { primaryKey } from "drizzle-orm/gel-core";
 import { serial, text, pgTable, varchar } from "drizzle-orm/pg-core";
 
-export const usermessage = pgTable("usermessage", {
+export const feedback = pgTable("feedback", {
   id: serial("id").primaryKey(),
   email: varchar("email", { length: 255 }).notNull(),
   message: text("message").notNull(),

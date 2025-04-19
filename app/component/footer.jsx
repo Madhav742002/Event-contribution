@@ -10,6 +10,7 @@ import {
   TiSocialInstagramCircular,
   TiSocialLinkedinCircular,
 } from "react-icons/ti";
+import toast from "react-hot-toast";
 
 export default function Footer() {
   const [formData, setFormData] = useState({});
@@ -40,7 +41,7 @@ export default function Footer() {
       console.log("User is logged in, submitting the form...");
 
       try {
-        const response = await fetch("/api/submitMessage", {
+        const response = await fetch("/api/feedback", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
@@ -48,15 +49,15 @@ export default function Footer() {
 
         const result = await response.json();
         if (response.ok) {
-          alert("Message submitted successfully!");
+          toast.success("Message submitted successfully!");
           setFormData({});
           e.target.reset();
         } else {
-          alert(`Error: ${result.error}`);
+          toast.error(`Error: ${result.error}`);
         }
       } catch (error) {
         console.error("Failed to submit message:", error);
-        alert("Failed to submit the message. Please try again later.");
+        toast.error("Failed to submit the message. Please try again later.");
       }
     }
   };
@@ -84,7 +85,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="p-4 flex flex-col items-center md:items-start">
-          <h1 className="font-semibold">Support</h1>
+          <h1 className="font-semibold mb-4">Support</h1>
           <ul className="flex flex-col items-center md:items-start space-y-3">
             <li>
             <a href="/component/blog" className="text-black hover:text-blue-600 transition-colors">
@@ -124,7 +125,7 @@ export default function Footer() {
           </ul>
         </div>
         <div className="p-4 m-1 flex flex-col items-center md:items-start">
-          <h1 className="font-semibold">Contact</h1>
+          <h1 className="font-semibold">Feedback</h1>
           <form onSubmit={handleSubmit}>
             <Input
               className="m-1 bg-slate-200"

@@ -8,7 +8,7 @@ import {
 
 export default function Team() {
   return (
-    <div className="py-16 bg-gradient-to-r from-blue-500 to-purple-600">
+    <div className="py-16 bg-gradient-to-r from-slate-700 to-purple-600">
       <div className="container mx-auto px-4 py-8">
       <div className="flex justify-center w-full">
           <h1 className="text-3xl md:text-5xl font-extrabold text-center text-white mb-8 md:mb-12 border-b-2 pb-4 border-white/30 inline-block">
