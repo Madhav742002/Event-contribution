@@ -1,4 +1,3 @@
-import { pgTable, varchar, uuid } from "drizzle-orm/pg-core";
 import { serial, text, pgTable, varchar } from "drizzle-orm/pg-core";
 
 export const feedback = pgTable("feedback", {
