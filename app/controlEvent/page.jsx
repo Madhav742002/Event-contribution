@@ -271,43 +271,6 @@ export default function ControlEvent() {
     }
   };
 
-  const handleVolunteerSubmit = async (e) => {
-    e.preventDefault();
-
-    const newVolunteer = {
-      ...volunteerForm,
-      post:
-        volunteerForm.post === "other"
-          ? volunteerForm.customPost
-          : volunteerForm.post,
-    };
-
-    try {
-      const response = await fetch("/api/volunteer", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newVolunteer),
-      });
-
-      const result = await response.json();
-      console.log("API Response:", result);
-
-      if (response.ok) {
-        if (result.message === "Volunteer already exists!") {
-          alert("Volunteer already exists! Loading data...");
-          setVolunteerForm(result.volunteer); // Prefill form with existing data
-        } else {
-          setVolunteers([...volunteers, newVolunteer]);
-        }
-        setShowVolunteerForm(false);
-      } else {
-        console.error("Failed to register volunteer:", result.error);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   const handleEditVolunteer = (index) => {
     const volunteer = volunteers[index];
     setVolunteerForm({

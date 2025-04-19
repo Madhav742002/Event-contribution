@@ -44,12 +44,3 @@ export const volunteers = pgTable("volunteers", {
   email: varchar("email").unique().notNull(),
   post: text("post").notNull(),
 });
-
-
-export const members = pgTable("members", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 100 }).notNull(),
-  email: varchar("email", { length: 100 }).notNull().unique(),
-  post: varchar("post", { length: 100 }).notNull(),
-  image: varchar("image", { length: 255 }).notNull(), // Image URL
-});

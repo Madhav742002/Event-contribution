@@ -24,7 +24,6 @@
     "drizzle-orm": "^0.40.1",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
-    "firebase": "^11.6.0",
     "formidable": "^3.5.2",
     "framer-motion": "^12.6.3",
     "fs": "^0.0.1-security",
