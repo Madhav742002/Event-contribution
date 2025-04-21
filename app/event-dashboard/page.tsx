@@ -153,14 +153,16 @@ export default function Dashboard() {
           }
 
           // Generate and download ticket
-          generateTicket(event, response.razorpay_payment_id, details);
-          
+        generateTicket(event, response.razorpay_payment_id, details);
+
           // Show success message
           alert("Payment successful! Your ticket has been downloaded.");
           setShowStudentForm(false);
         } catch (error) {
           console.error("Error processing payment:", error);
-          alert("Payment successful but failed to store details. Please contact support.");
+          alert(
+            "Payment successful but failed to store details. Please contact support."
+          );
         }
       },
       prefill: {
@@ -206,227 +208,215 @@ export default function Dashboard() {
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
         }
-        .ticket {
-    max-width: 600px;
-    width: 100%;
+        body {
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .ticket-container {
+            max-width: 850px;
     margin: 0 auto;
-    border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
     overflow: hidden;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    background: #fff;
-}
-
-.ticket-header {
-    background: linear-gradient(135deg, #f8f8f8, #ffffff);
-    color: #333;
-    padding: 20px;
-    text-align: center;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.ticket-title {
-    font-size: 24px;
-    margin-bottom: 8px;
+            display: flex;
+        }
+        .ticket-left {
+            flex: 2;
+            padding: 30px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .ticket-right {
+            flex: 1;
+            padding: 30px;
+            background: white;
+            position: relative;
+            border-left: 2px dashed #e5e7eb;
+        }
+        .ticket-right::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            width: 30px;
+            height: 30px;
+            background: #f5f5f5;
+            border-radius: 50%;
+        }
+        .ticket-right::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: -15px;
+            width: 30px;
+            height: 30px;
+            background: #f5f5f5;
+            border-radius: 50%;
+        }
+        .event-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
     text-transform: uppercase;
-    font-weight: bold;
-    color: #222;
-}
-
-.ticket-subtitle {
-    font-size: 16px;
-    margin-bottom: 12px;
-    color: #555;
-}
-
-.ticket-details {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 20px;
-    background: #fff;
-}
-
+            letter-spacing: 1px;
+        }
+        .event-date {
+            font-size: 18px;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        .event-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
 .ticket-info {
-    flex: 1;
-    min-width: 250px;
-    padding-right: 15px;
+            margin-top: 20px;
 }
-
-.ticket-qr {
-    flex: 0 0 150px;
+        .info-row {
     display: flex;
-    flex-direction: column;
+            margin-bottom: 15px;
     align-items: center;
-    justify-content: center;
-    padding: 15px;
-    background: #f9f9f9;
-    border-radius: 8px;
-    margin-left: 15px;
-    border: 1px solid #e0e0e0;
-}
-
-.ticket-qr img {
+        }
+        .info-label {
+            font-size: 14px;
+            opacity: 0.8;
     width: 120px;
-    height: 120px;
-    margin-bottom: 10px;
-}
-
-.ticket-qr p {
-    font-size: 12px;
-    color: #666;
+        }
+        .info-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .barcode {
     text-align: center;
-}
-
-.detail-row {
-    margin-bottom: 10px;
-}
-
-.detail-label {
-    font-weight: bold;
-    color: #555;
+            margin-top: 20px;
+        }
+        .barcode img {
+            max-width: 100%;
+            height: auto;
+        }
+        .ticket-number {
+            text-align: center;
     font-size: 14px;
-    margin-bottom: 3px;
-}
-
-.detail-value {
-    font-size: 15px;
-    color: #333;
-}
-
-.divider {
-    height: 1px;
-    background: #eee;
-    margin: 15px 0;
-}
-
-.section-title {
-    font-size: 18px;
-    margin-bottom: 12px;
-    color: #222;
-}
-
-.ticket-footer {
-    background: #f5f5f5;
-    padding: 15px;
+            color: #6b7280;
+            margin-top: 10px;
+        }
+        .entry-type {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .price {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+        .qr-code {
     text-align: center;
-    font-size: 14px;
-    color: #666;
-    border-top: 1px dashed #ccc;
-}
-
-.event-media {
-    width: 100%;
-    padding: 10px 20px;
-    text-align: center;
-    background: #fff;
-}
-
-.event-media img, .event-media video {
-    max-width: 100%;
-    border-radius: 8px;
+            margin-top: 30px;
+        }
+        .qr-code img {
+            width: 150px;
+            height: 150px;
     margin-bottom: 10px;
-    border: 1px solid #e0e0e0;
-}
-
-@media (max-width: 600px) {
-    .ticket-details {
-        flex-direction: column;
-    }
-    .ticket-info {
-        padding-right: 0;
-        margin-bottom: 20px;
-    }
-    .ticket-qr {
-        margin-left: 0;
-        margin-top: 15px;
+        }
+        .qr-text {
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+        }
+        .ticket-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .ticket-container {
+                box-shadow: none;
     }
 }
     </style>
 </head>
 <body>
-    <div class="ticket">
-        <div class="ticket-header">
-            <h1 class="ticket-title">${event.title}</h1>
-            <p class="ticket-subtitle">${event.description}</p>
-            <div class="detail-row">
-                <div class="detail-value">${event.date} | ${event.time}</div>
-                <div class="detail-value">${event.location}</div>
-                <div class="detail-value">Organized by: ${event.createdBy}</div>
-            </div>
+    <div class="ticket-container">
+        <div class="ticket-left">
+            <div class="entry-type">VIP ENTRY PASS</div>
+            <h1 class="event-name">${event.title}</h1>
+            <div class="event-date">
+                <div>${new Date(event.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                <div>${event.time}</div>
         </div>
         
-        ${
-          event.media
-            ? `
-        <div class="event-media">
-            ${
-              event.media.type === "image"
-                ? `<img src="${event.media.preview}" alt="Event Image" />`
-                : `<video src="${event.media.preview}" controls></video>`
-            }
-        </div>`
-            : ""
-        }
-        
-        <div class="ticket-details">
+            ${event.imageUrls && event.imageUrls.length > 0 
+              ? `<img src="${event.imageUrls[0]}" alt="Event" class="event-image">` 
+              : ''}
+            
             <div class="ticket-info">
-                <h3 class="section-title">Student Details</h3>
-                <div class="detail-row">
-                    <div class="detail-label">Name</div>
-                    <div class="detail-value">${studentDetails.name}</div>
+                <div class="info-row">
+                    <div class="info-label">LOCATION</div>
+                    <div class="info-value">${event.location}</div>
                 </div>
-                <div class="detail-row">
-                    <div class="detail-label">Email</div>
-                    <div class="detail-value">${studentDetails.Email}</div>
+                <div class="info-row">
+                    <div class="info-label">ORGANIZER</div>
+                    <div class="info-value">${event.createdBy}</div>
                 </div>
-                <div class="detail-row">
-                    <div class="detail-label">Branch</div>
-                    <div class="detail-value">${studentDetails.branch}</div>
+                <div class="info-row">
+                    <div class="info-label">ATTENDEE</div>
+                    <div class="info-value">${details.name}</div>
                 </div>
-                <div class="detail-row">
-                    <div class="detail-label">Program</div>
-                    <div class="detail-value">${studentDetails.program}</div>
                 </div>
-                <div class="detail-row">
-                    <div class="detail-label">Academic Year</div>
-                    <div class="detail-value">${
-                      studentDetails.academicYear
-                    }</div>
+            
+            <div class="price">₹ ${event.ticketPrice}/-</div>
                 </div>
-                <div class="detail-row">
-                    <div class="detail-label">Semester</div>
-                    <div class="detail-value">${studentDetails.semester}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Enrollment No</div>
-                    <div class="detail-value">${
-                      studentDetails.enrollmentNo
-                    }</div>
-                </div>
-                <div class="divider"></div>
-                <div class="detail-row">
-                    <div class="detail-label">Payment ID</div>
-                    <div class="detail-value">${paymentId}</div>
-                </div>
-            </div>
-          <div class="ticket-qr">
+        
+        <div class="ticket-right">
+            <div class="qr-code">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
                   `Event: ${event.title}\n` +
                     `Date: ${event.date}\n` +
                     `Time: ${event.time}\n` +
                     `Location: ${event.location}\n` +
-                    `Organizer: ${event.createdBy}\n` +
-                    `Attendee: ${studentDetails.name}\n` +
-                    `Email: ${studentDetails.Email}\n` +
-                    `Enrollment: ${studentDetails.enrollmentNo}\n` +
+                  `Attendee: ${details.name}\n` +
+                  `Email: ${details.Email}\n` +
+                  `Enrollment: ${details.enrollmentNo}\n` +
                     `Payment ID: ${paymentId}`
-                )}" alt="QR Code" />
-                <p>Scan for verification</p>
+                )}" alt="QR Code">
+                <div class="qr-text">Scan for verification</div>
+            </div>
+            
+            <div class="ticket-info">
+                <div class="info-row">
+                    <div class="info-label">EMAIL</div>
+                    <div class="info-value">${details.Email}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">ENROLLMENT</div>
+                    <div class="info-value">${details.enrollmentNo}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">PAYMENT ID</div>
+                    <div class="info-value">${paymentId}</div>
             </div>
         </div>
         
         <div class="ticket-footer">
-            Thank you for your purchase!
+                This ticket is valid for one-time entry only.<br>
+                Please carry a valid ID proof along with this ticket.
+            </div>
         </div>
     </div>
 </body>
@@ -566,28 +556,32 @@ export default function Dashboard() {
 
           <div className="mb-8">
             <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="relative flex-1 group">
-  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-    <Search 
-      className={`h-5 w-5 transition-colors duration-300 ${searchTerm ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'}`}
-    />
-  </div>
-  <Input
-    type="text"
-    placeholder="Search events..."
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    className="pl-10 pr-10 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm hover:shadow-md transition-all duration-300 bg-white/90 backdrop-blur-sm"
-  />
-  {searchTerm && (
-    <button
-      onClick={() => setSearchTerm('')}
-      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 transition-colors"
-    >
-      <X className="h-5 w-5" />
-    </button>
-  )}
-</div>
+              <div className="relative flex-1 group">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <Search
+                    className={`h-5 w-5 transition-colors duration-300 ${
+                      searchTerm
+                        ? "text-blue-500"
+                        : "text-gray-400 group-hover:text-gray-500"
+                    }`}
+                  />
+                </div>
+                <Input
+                  type="text"
+                  placeholder="Search events..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 pr-10 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm hover:shadow-md transition-all duration-300 bg-white/90 backdrop-blur-sm"
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm("")}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => setFilterType("all")}
@@ -719,16 +713,16 @@ export default function Dashboard() {
                           Event Ended
                         </button>
                       ) : (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedEvent(event);
-                            setShowStudentForm(true);
-                          }}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedEvent(event);
+                        setShowStudentForm(true);
+                      }}
                           className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-                        >
-                          Buy Ticket - ₹{event.ticketPrice}
-                        </button>
+                    >
+                      Buy Ticket - ₹{event.ticketPrice}
+                    </button>
                       )}
                     </div>
                   )}
@@ -780,7 +774,9 @@ export default function Dashboard() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Address</label>
+                <label className="block text-sm font-medium mb-1">
+                  Address
+                </label>
                 <Input
                   required
                   value={studentDetails.branch}
@@ -807,7 +803,7 @@ export default function Dashboard() {
                   }
                 />
               </div>
-             
+
               <div>
                 <label className="block text-sm font-medium mb-1">
                   Enrollment No.

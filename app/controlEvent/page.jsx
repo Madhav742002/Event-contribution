@@ -218,7 +218,7 @@ export default function ControlEvent() {
       });
 
       if (response.ok) {
-        const result = await response.json();
+      const result = await response.json();
         if (editingEventIndex !== null) {
           // Update existing event in state
           setEvents(
@@ -243,7 +243,7 @@ export default function ControlEvent() {
   };
   // handle edit event
   const handleEditEvent = (event) => {
-    setEventForm({
+      setEventForm({
       id: event.id, // Make sure to include the ID for updates
       title: event.title,
       description: event.description,
@@ -271,7 +271,7 @@ export default function ControlEvent() {
         } else {
           throw new Error("Failed to delete event");
         }
-      } catch (error) {
+    } catch (error) {
         console.error("Error deleting event:", error);
         toast.error("Failed to delete event");
       }
@@ -555,7 +555,7 @@ export default function ControlEvent() {
                                               .charAt(0)
                                               .toUpperCase()}
                                           </span>
-                                        </div>
+                            </div>
                                         <div className="ml-4">
                                           <div className="text-sm font-medium text-gray-900">
                                             {payment.studentName}
