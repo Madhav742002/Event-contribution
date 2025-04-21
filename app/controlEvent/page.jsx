@@ -93,6 +93,9 @@ export default function ControlEvent() {
   // Add this state for total revenue
   const [totalRevenue, setTotalRevenue] = useState(0);
 
+  // Add this state for recent payments
+  const [recentPayments, setRecentPayments] = useState([]);
+
   // fetch events data from database
   useEffect(() => {
     const fetchEvents = async () => {
@@ -279,7 +282,7 @@ export default function ControlEvent() {
   useEffect(() => {
     const fetchPaymentDetails = async () => {
       try {
-        const response = await fetch('/api/payment');
+        const response = await fetch("/api/payment");
         if (response.ok) {
           const data = await response.json();
           if (data.success && data.payments) {
@@ -296,6 +299,29 @@ export default function ControlEvent() {
     };
 
     fetchPaymentDetails();
+  }, []);
+
+  // Add this useEffect to fetch recent payments
+  useEffect(() => {
+    const fetchRecentPayments = async () => {
+      try {
+        const response = await fetch("/api/payment");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.payments) {
+            // Sort payments by date in descending order and take the last 10
+            const sortedPayments = data.payments
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+              .slice(0, 10);
+            setRecentPayments(sortedPayments);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching recent payments:", error);
+      }
+    };
+
+    fetchRecentPayments();
   }, []);
 
   // Only render the UI on the client-side
@@ -450,7 +476,7 @@ export default function ControlEvent() {
                       <CardTitle>Admin Dashboard</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-r from-blue-500 to-blue-600 text-white">
                           <h3 className="text-xl font-semibold mb-2">
                             Total Events
@@ -466,18 +492,179 @@ export default function ControlEvent() {
                         </Card>
                         <Card className="p-6 hover:shadow-lg transition-shadow bg-pink-400">
                           <h3 className="text-xl font-semibold mb-2 text-black">
-                            Total Revenue
+                            Total Collection
                           </h3>
                           <div className="flex items-center gap-2">
                             <span className="text-black -font-bold text-5xl">
                               ₹{" "}
                             </span>
                             <span className="text-3xl font-bold text-green-600 border-2 p-2 rounded-lg w-full bg-white">
-                              {totalRevenue.toLocaleString('en-IN')}
+                              {totalRevenue.toLocaleString("en-IN")}
                               <span className="text-3xl font-bold">/-</span>
                             </span>
                           </div>
                         </Card>
+                      </div>
+
+                      {/* Recent Payment History */}
+                      <div className="mt-8 bg-slate-400 p-3 rounded-md">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-6">
+                          Recent Payment History
+                        </h3>
+                        <div className="bg-white shadow-sm rounded-xl overflow-hidden border border-gray-100">
+                          <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200">
+                              <thead className="bg-green-200">
+                                <tr className="">
+                                  <th className=" font-bold px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">
+                                    #
+                                  </th>
+                                  <th className=" font-bold px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">
+                                    Name
+                                  </th>
+                                  <th className=" font-bold px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">
+                                    Payment ID
+                                  </th>
+                                  <th className=" font-bold px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">
+                                    Event
+                                  </th>
+                                  <th className=" font-bold px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">
+                                    Amount
+                                  </th>
+                                  <th className=" font-bold px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">
+                                    Date & Time
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody className="bg-white divide-y divide-gray-500">
+                                {recentPayments.map((payment, index) => (
+                                  <tr
+                                    key={payment.id}
+                                    className="transition-colors hover:bg-gray-50/80"
+                                  >
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <span className="text-sm font-medium text-gray-500">
+                                        {index + 1}
+                                      </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <div className="flex items-center">
+                                        <div className="flex-shrink-0 h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                                          <span className="text-indigo-600 font-medium">
+                                            {payment.studentName
+                                              .charAt(0)
+                                              .toUpperCase()}
+                                          </span>
+                                        </div>
+                                        <div className="ml-4">
+                                          <div className="text-sm font-medium text-gray-900">
+                                            {payment.studentName}
+                                          </div>
+                                          <div className="text-xs text-gray-500">
+                                            Student
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        {payment.paymentId}
+                                      </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <div className="text-sm text-gray-900 font-medium">
+                                        {payment.eventTitle}
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        Event
+                                      </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <span className="text-sm font-semibold text-green-600">
+                                        ₹
+                                        {parseFloat(
+                                          payment.amount
+                                        ).toLocaleString("en-IN")}
+                                      </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <div className="text-sm text-gray-600">
+                                        {new Date(
+                                          payment.createdAt
+                                        ).toLocaleString("en-IN", {
+                                          dateStyle: "medium",
+                                          timeStyle: "short",
+                                        })}
+                                      </div>
+                                      <div className="text-xs text-gray-400">
+                                        {new Date(
+                                          payment.createdAt
+                                        ).toLocaleDateString("en-IN", {
+                                          weekday: "short",
+                                        })}
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                                {recentPayments.length === 0 && (
+                                  <tr>
+                                    <td
+                                      colSpan="6"
+                                      className="px-6 py-8 text-center"
+                                    >
+                                      <div className="flex flex-col items-center justify-center">
+                                        <svg
+                                          className="w-12 h-12 text-gray-400"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="1.5"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                                          ></path>
+                                        </svg>
+                                        <h4 className="mt-4 text-lg font-medium text-gray-700">
+                                          No payments found
+                                        </h4>
+                                        <p className="mt-1 text-sm text-gray-500">
+                                          There are no recent payments to
+                                          display
+                                        </p>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                          {recentPayments.length > 0 && (
+                            <div className="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-100">
+                              <div className="text-sm text-gray-500">
+                                Showing <span className="font-medium">1</span>{" "}
+                                to{" "}
+                                <span className="font-medium">
+                                  {recentPayments.length}
+                                </span>{" "}
+                                of{" "}
+                                <span className="font-medium">
+                                  {recentPayments.length}
+                                </span>{" "}
+                                results
+                              </div>
+                              <div className="flex space-x-2">
+                                <button className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
+                                  Previous
+                                </button>
+                                <button className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
+                                  Next
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
