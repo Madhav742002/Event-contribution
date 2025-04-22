@@ -26,7 +26,7 @@ export default function Header() {
             <span className="group-hover:scale-105 transition-transform">Home</span>
           </Link>
           <Link href="/event-dashboard" className="px-4 py-2 text-white font-bold hover:bg-purple-500/30 rounded-full transition-all duration-300 flex items-center group">
-            <span className="group-hover:scale-105 transition-transform">Event Dashboard</span>
+            <span className="group-hover:scale-105 transition-transform">Events 🔥</span>
           </Link>
           <Link href="/fund-collection" className="px-4 py-2 text-white font-bold hover:bg-blue-400/30 rounded-full transition-all duration-300 flex items-center group">
             <span className="group-hover:scale-105 transition-transform">Fund Collection</span>
