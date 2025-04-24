@@ -201,44 +201,67 @@ export default function ControlEvent() {
 
   const handleEventSubmit = async (e) => {
     e.preventDefault();
-
     try {
+      const url = editingEventIndex !== null
+        ? `/api/events?id=${eventForm.id}`
+        : "/api/events";
       const method = editingEventIndex !== null ? "PUT" : "POST";
-      const url =
-        editingEventIndex !== null
-          ? `/api/events?id=${eventForm.id}`
-          : "/api/events";
+
+      // Validate required fields
+      if (!eventForm.title || !eventForm.description || !eventForm.date || !eventForm.time || !eventForm.location) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      // Add the createdBy field
+      const requestBody = {
+        ...eventForm,
+        createdBy: formData.name, // Assuming formData.name is the creator's name
+      };
 
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(eventForm),
+        body: JSON.stringify(requestBody),
       });
 
-      if (response.ok) {
-      const result = await response.json();
-        if (editingEventIndex !== null) {
-          // Update existing event in state
-          setEvents(
-            events.map((event, index) =>
-              index === editingEventIndex ? result.event : event
-            )
-          );
-          toast.success("Event updated successfully");
-        } else {
-          // Add new event to state
-          setEvents([...events, result.event]);
-          toast.success("Event created successfully");
-        }
-        setShowEventForm(false);
-      } else {
-        throw new Error("Failed to save event");
+      console.log("API Response:", response);
+
+      if (!response.ok) {
+        const error = await response.json();
+        console.error("API Error:", error);
+        alert(error.error || "Failed to save event.");
+        return;
       }
+
+      const data = await response.json();
+      console.log("Event saved successfully:", data);
+
+      // Reset form and close modal
+      setEventForm({
+        title: "",
+        description: "",
+        date: "",
+        time: "",
+        location: "",
+        ticketPrice: "",
+        imageUrls: [],
+        newImageUrl: "",
+      });
+      setShowEventForm(false);
+
+      // Refresh events list
+      const fetchEvents = async () => {
+        const eventsResponse = await fetch("/api/events");
+        const eventsData = await eventsResponse.json();
+        setEvents(eventsData);
+      };
+      fetchEvents();
     } catch (error) {
-      console.error("Error saving event:", error);
-      toast.error("Failed to save event");
+      console.error("Error in handleEventSubmit:", error);
+      alert("An unexpected error occurred. Please try again.");
     }
   };
   // handle edit event
