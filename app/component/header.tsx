@@ -28,11 +28,11 @@ export default function Header() {
           <Link href="/event-dashboard" className="px-4 py-2 text-white font-bold hover:bg-purple-500/30 rounded-full transition-all duration-300 flex items-center group">
             <span className="group-hover:scale-105 transition-transform">Events 🔥</span>
           </Link>
-          <Link href="/fund-collection" className="px-4 py-2 text-white font-bold hover:bg-blue-400/30 rounded-full transition-all duration-300 flex items-center group">
-            <span className="group-hover:scale-105 transition-transform">Fund Collection</span>
+          <Link href="/component/about" className="px-4 py-2 text-white font-bold hover:bg-blue-400/30 rounded-full transition-all duration-300 flex items-center group">
+            <span className="group-hover:scale-105 transition-transform">About</span>
           </Link>
-          <Link href="/task-management" className="px-4 py-2 text-white font-bold hover:bg-green-400/30 rounded-full transition-all duration-300 flex items-center group">
-            <span className="group-hover:scale-105 transition-transform">Task Management</span>
+          <Link href="/component/contact-us" className="px-4 py-2 text-white font-bold hover:bg-green-400/30 rounded-full transition-all duration-300 flex items-center group">
+            <span className="group-hover:scale-105 transition-transform">Contact Us</span>
           </Link>
         </ul>
 
@@ -78,21 +78,21 @@ export default function Header() {
               className="text-white font-bold"
               onClick={() => setIsOpen(false)}
             >
-              Event Dashboard
+              Events 🔥
             </Link>
             <Link
-              href="/fund-collection"
+              href="/component/about"
               className="text-white font-bold"
               onClick={() => setIsOpen(false)}
             >
-              Fund Collection
+              About
             </Link>
             <Link
-              href="/task-management"
+              href="/component/contact-us"
               className="text-white font-bold"
               onClick={() => setIsOpen(false)}
             >
-              Task Management
+              Contact Us
             </Link>
 
             {/* Buttons inside Mobile Menu */}
