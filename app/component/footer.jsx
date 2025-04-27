@@ -70,16 +70,36 @@ export default function Footer() {
           <h1 className="font-extrabold text-2xl">EVENTIFY</h1>
           <h1>Social links</h1>
           <div className="flex justify-center gap-2">
-          <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:bg-purple-100 transition-all duration-300">
+            <a
+              href="https://www.instagram.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-full hover:bg-purple-100 transition-all duration-300"
+            >
               <TiSocialInstagramCircular className="text-4xl text-pink-600 hover:scale-110 transition-transform" />
             </a>
-            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:bg-blue-100 transition-all duration-300">
+            <a
+              href="https://www.facebook.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-full hover:bg-blue-100 transition-all duration-300"
+            >
               <TiSocialFacebookCircular className="text-4xl text-blue-600 hover:scale-110 transition-transform" />
             </a>
-            <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:bg-blue-100 transition-all duration-300">
+            <a
+              href="https://www.linkedin.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-full hover:bg-blue-100 transition-all duration-300"
+            >
               <TiSocialLinkedinCircular className="text-4xl text-blue-700 hover:scale-110 transition-transform" />
             </a>
-            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:bg-gray-100 transition-all duration-300">
+            <a
+              href="https://github.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-full hover:bg-gray-100 transition-all duration-300"
+            >
               <TiSocialGithubCircular className="text-4xl text-gray-800 hover:scale-110 transition-transform" />
             </a>
           </div>
@@ -88,17 +108,26 @@ export default function Footer() {
           <h1 className="font-semibold mb-4">Support</h1>
           <ul className="flex flex-col items-center md:items-start space-y-3">
             <li>
-            <a href="/component/blog" className="text-black hover:text-blue-600 transition-colors">
+              <a
+                href="/component/blog"
+                className="text-black hover:text-blue-600 transition-colors"
+              >
                 Blogs
               </a>
             </li>
             <li>
-            <a href="/component/pricing" className="text-black hover:text-blue-600 transition-colors">
+              <a
+                href="/component/pricing"
+                className="text-black hover:text-blue-600 transition-colors"
+              >
                 Pricing
               </a>
             </li>
             <li>
-            <a href="/component/contact-us" className="text-black hover:text-blue-600 transition-colors">
+              <a
+                href="/component/contact-us"
+                className="text-black hover:text-blue-600 transition-colors"
+              >
                 Contact Us
               </a>
             </li>
@@ -108,17 +137,26 @@ export default function Footer() {
           <h1 className="font-semibold mb-4">Quick Links</h1>
           <ul className="flex flex-col items-center md:items-start space-y-3">
             <li>
-            <a href="/component/about" className="text-black hover:text-blue-600 transition-colors">
+              <a
+                href="/component/about"
+                className="text-black hover:text-blue-600 transition-colors"
+              >
                 About
               </a>
             </li>
             <li>
-            <a href="/component/career" className="text-black hover:text-blue-600 transition-colors">
+              <a
+                href="/component/career"
+                className="text-black hover:text-blue-600 transition-colors"
+              >
                 Careers
               </a>
             </li>
             <li>
-            <a href="/component/privacy-policy" className="text-black hover:text-blue-600 transition-colors">
+              <a
+                href="/component/privacy-policy"
+                className="text-black hover:text-blue-600 transition-colors"
+              >
                 Privacy & Policy
               </a>
             </li>
