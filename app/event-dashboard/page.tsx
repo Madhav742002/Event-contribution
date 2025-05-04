@@ -753,7 +753,7 @@ box-shadow: 4px 4px rgba(18, 28, 25, 20.1)
                     </p>
                     <p>
                       <span className="font-medium">Organizer:</span>{" "}
-                      {event.createdBy}
+                      {"Unknown"}
                     </p>
                     {event.ticketPrice && (
                       <p>
