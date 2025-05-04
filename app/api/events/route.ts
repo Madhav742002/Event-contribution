@@ -1,13 +1,29 @@
-import { NextResponse } from "next/server";
-import { db } from "@/configs/db";
+import { db } from "@/lib/db";
 import { events } from "@/configs/schema";
+import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 
-// GET all events
 export async function GET() {
   try {
-    const allEvents = await db.select().from(events);
-    return NextResponse.json(allEvents);
+    const allEvents = await db.select().from(events).orderBy(events.date);
+
+    // Convert to plain objects to avoid serialization issues
+    const eventsData = allEvents.map(event => ({
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      date: event.date,
+      time: event.time,
+      location: event.location,
+      createdBy: event.clerkId, // Or you might want to fetch the user's name here
+      ticketPrice: event.ticketPrice,
+      imageUrls: event.imageUrls,
+      createdAt: event.createdAt,
+      // Add status based on date comparison
+      status: new Date(`${event.date}T${event.time}`) < new Date() ? "ended" : "active"
+    }));
+
+    return NextResponse.json(eventsData);
   } catch (error) {
     console.error("Error fetching events:", error);
     return NextResponse.json(
@@ -17,107 +33,38 @@ export async function GET() {
   }
 }
 
-// POST new event
-export async function POST(req: Request) {
-  try {
-    const body = await req.json();
-    console.log("Received event data:", body);
+import { NextRequest } from "next/server";
 
-    // Validate required fields
-    if (!body.title || !body.description || !body.date || !body.time || !body.location || !body.createdBy) {
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+
+    // Validate the incoming data
+    if (!body.title || !body.date || !body.time || !body.location) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    // Create new event
+    // Insert the new event into the database
     const newEvent = await db.insert(events).values({
       title: body.title,
-      description: body.description,
-      date: body.date,
+      description: body.description || "",
+      date: body.date, // Keep as string
       time: body.time,
       location: body.location,
-      ticketPrice: body.ticketPrice || null,
+      ticketPrice: body.ticketPrice || "0", // Ensure ticketPrice is a string
       imageUrls: body.imageUrls || [],
-      createdBy: body.createdBy,
-      createdAt: new Date().toISOString(),
-    });
+      clerkId: body.clerkId, // Add clerkId
+      createdAt: new Date(),
+    }).returning();
 
-    return NextResponse.json(
-      { message: "Event created successfully", event: newEvent },
-      { status: 201 }
-    );
+    return NextResponse.json({ success: true, event: newEvent[0] });
   } catch (error) {
     console.error("Error creating event:", error);
     return NextResponse.json(
       { error: "Failed to create event" },
-      { status: 500 }
-    );
-  }
-}
-
-// DELETE event
-export async function DELETE(req: Request) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
-
-    if (!id) {
-      return NextResponse.json(
-        { error: "Event ID is required" },
-        { status: 400 }
-      );
-    }
-
-    await db.delete(events).where(eq(events.id, parseInt(id)));
-    return NextResponse.json(
-      { message: "Event deleted successfully" },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("Error deleting event:", error);
-    return NextResponse.json(
-      { error: "Failed to delete event" },
-      { status: 500 }
-    );
-  }
-} 
-// PUT (update) event
-export async function PUT(req: Request) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
-    const body = await req.json();
-
-    if (!id) {
-      return NextResponse.json(
-        { error: "Event ID is required" },
-        { status: 400 }
-      );
-    }
-
-    const updatedEvent = await db.update(events)
-      .set({
-        title: body.title,
-        description: body.description,
-        date: body.date,
-        time: body.time,
-        location: body.location,
-        ticketPrice: body.ticketPrice || null,
-        imageUrls: body.imageUrls || [],
-      })
-      .where(eq(events.id, parseInt(id)))
-      .returning();
-
-    return NextResponse.json(
-      { message: "Event updated successfully", event: updatedEvent[0] },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("Error updating event:", error);
-    return NextResponse.json(
-      { error: "Failed to update event" },
       { status: 500 }
     );
   }

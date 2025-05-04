@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, ChevronLeft, ChevronRight, X } from "lucide-react";
@@ -12,25 +12,51 @@ import {
 import Script from "next/script";
 import TrueFocus from "../component/TrueFocus";
 
-export default function Dashboard() {
-  interface Event {
-    id: string;
-    title: string;
-    description: string;
-    date: string;
-    time: string;
-    location: string;
-    createdBy: string;
-    ticketPrice?: number;
-    imageUrls?: string[];
-    media?: {
-      type: "image" | "video";
-      preview: string;
-    };
-    createdAt: string;
-    status: "active" | "ended";
-  }
+// Create a context for events
+type EventContextType = {
+  events: Event[];
+  setEvents: React.Dispatch<React.SetStateAction<Event[]>>;
+};
 
+const EventContext = createContext<EventContextType | undefined>(undefined);
+
+export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [events, setEvents] = useState<Event[]>([]);
+
+  return (
+    <EventContext.Provider value={{ events, setEvents }}>
+      {children}
+    </EventContext.Provider>
+  );
+};
+
+export const useEventContext = () => {
+  const context = useContext(EventContext);
+  if (!context) {
+    throw new Error("useEventContext must be used within an EventProvider");
+  }
+  return context;
+};
+
+interface Event {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  createdBy: string;
+  ticketPrice?: number;
+  imageUrls?: string[];
+  media?: {
+    type: "image" | "video";
+    preview: string;
+  };
+  createdAt: string;
+  status: "active" | "ended";
+}
+
+export default function Dashboard() {
   interface StudentDetails {
     name: string;
     Email: string;
@@ -43,7 +69,7 @@ export default function Dashboard() {
 
   type FilterType = "all" | "upcoming" | "ended";
 
-  const [events, setEvents] = useState<Event[]>([]);
+  const { events, setEvents } = useEventContext();
   const [volunteers, setVolunteers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -59,6 +85,13 @@ export default function Dashboard() {
     academicYear: "",
     enrollmentNo: "",
   });
+
+  const [emailError, setEmailError] = useState("");
+
+const validateEmail = (email: string) => {
+  const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+  return gmailRegex.test(email);
+};
 
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedEventImages, setSelectedEventImages] = useState<string[]>([]);
@@ -141,8 +174,9 @@ export default function Dashboard() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              event,
-              studentDetails: details,
+              eventId: event.id,
+              studentName: details.name,
+              studentEmail: details.Email,
               paymentId: response.razorpay_payment_id,
               amount: event.ticketPrice,
             }),
@@ -153,7 +187,7 @@ export default function Dashboard() {
           }
 
           // Generate and download ticket
-        generateTicket(event, response.razorpay_payment_id, details);
+          generateTicket(event, response.razorpay_payment_id, details);
 
           // Show success message
           alert("Payment successful! Your ticket has been downloaded.");
@@ -306,15 +340,35 @@ export default function Dashboard() {
             color: #6b7280;
             margin-top: 10px;
         }
-        .entry-type {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
+
+       .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #ffffff;
+  border-bottom: 2px solid #e0e0e0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  border-radius: 40px;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e40af;
+  letter-spacing: 1px;
+}
+
+.entry-type {
+  background-color: #ffff80;
+  color: #7c3aed;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+box-shadow: 4px 4px rgba(18, 28, 25, 20.1)
+}
         .price {
             font-size: 24px;
             font-weight: 700;
@@ -354,26 +408,34 @@ export default function Dashboard() {
 <body>
     <div class="ticket-container">
         <div class="ticket-left">
-            <div class="entry-type">VIP ENTRY PASS</div>
+          <div class="header">
+             <div class="logo">🎉 Eventify</div>
+             <div class="entry-type">VIP ENTRY PASS</div>
+          </div>
+
             <h1 class="event-name">${event.title}</h1>
             <div class="event-date">
-                <div>${new Date(event.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                <div>${new Date(event.date).toLocaleDateString("en-US", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}</div>
                 <div>${event.time}</div>
         </div>
         
-            ${event.imageUrls && event.imageUrls.length > 0 
-              ? `<img src="${event.imageUrls[0]}" alt="Event" class="event-image">` 
-              : ''}
+            ${
+              event.imageUrls && event.imageUrls.length > 0
+                ? `<img src="${event.imageUrls[0]}" alt="Event" class="event-image">`
+                : ""
+            }
             
             <div class="ticket-info">
                 <div class="info-row">
                     <div class="info-label">LOCATION</div>
                     <div class="info-value">${event.location}</div>
                 </div>
-                <div class="info-row">
-                    <div class="info-label">ORGANIZER</div>
-                    <div class="info-value">${event.createdBy}</div>
-                </div>
+               
                 <div class="info-row">
                     <div class="info-label">ATTENDEE</div>
                     <div class="info-value">${details.name}</div>
@@ -390,9 +452,8 @@ export default function Dashboard() {
                     `Date: ${event.date}\n` +
                     `Time: ${event.time}\n` +
                     `Location: ${event.location}\n` +
-                  `Attendee: ${details.name}\n` +
-                  `Email: ${details.Email}\n` +
-                  `Enrollment: ${details.enrollmentNo}\n` +
+                    `Attendee: ${details.name}\n` +
+                    `Email: ${details.Email}\n` +
                     `Payment ID: ${paymentId}`
                 )}" alt="QR Code">
                 <div class="qr-text">Scan for verification</div>
@@ -402,10 +463,6 @@ export default function Dashboard() {
                 <div class="info-row">
                     <div class="info-label">EMAIL</div>
                     <div class="info-value">${details.Email}</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">ENROLLMENT</div>
-                    <div class="info-value">${details.enrollmentNo}</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">PAYMENT ID</div>
@@ -505,6 +562,8 @@ export default function Dashboard() {
     );
   }
 
+
+
   return (
     <>
       <Script
@@ -558,7 +617,7 @@ export default function Dashboard() {
             <div className="flex flex-col md:flex-row gap-4 mb-6">
               <div className="relative flex-1 group">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <Search
+                  <Search
                     className={`h-5 w-5 transition-colors duration-300 ${
                       searchTerm
                         ? "text-blue-500"
@@ -713,16 +772,16 @@ export default function Dashboard() {
                           Event Ended
                         </button>
                       ) : (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedEvent(event);
-                        setShowStudentForm(true);
-                      }}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedEvent(event);
+                            setShowStudentForm(true);
+                          }}
                           className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-                    >
-                      Buy Ticket - ₹{event.ticketPrice}
-                    </button>
+                        >
+                          Buy Ticket - ₹{event.ticketPrice}
+                        </button>
                       )}
                     </div>
                   )}
@@ -740,6 +799,14 @@ export default function Dashboard() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
+                // Validate mobile number before proceeding
+                if (
+                  studentDetails.program.length !== 10 ||
+                  !/^\d+$/.test(studentDetails.program)
+                ) {
+                  alert("Please enter a valid 10-digit mobile number");
+                  return;
+                }
                 if (selectedEvent) {
                   handlePayment(selectedEvent, studentDetails);
                   setShowStudentForm(false);
@@ -761,17 +828,26 @@ export default function Dashboard() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Email</label>
-                <Input
-                  required
-                  value={studentDetails.Email}
-                  onChange={(e) =>
-                    setStudentDetails({
-                      ...studentDetails,
-                      Email: e.target.value,
-                    })
-                  }
-                />
+              <label className="block text-sm font-medium mb-1">Email</label>
+<Input
+  required
+  type="email"
+  value={studentDetails.Email}
+  onChange={(e) => {
+    const newEmail = e.target.value;
+    setStudentDetails({
+      ...studentDetails,
+      Email: newEmail,
+    });
+
+    if (!validateEmail(newEmail)) {
+      setEmailError("Please enter a valid Gmail address (e.g., yourname@gmail.com)");
+    } else {
+      setEmailError("");
+    }
+  }}
+/>
+{emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">
@@ -794,41 +870,44 @@ export default function Dashboard() {
                 </label>
                 <Input
                   required
+                  type="tel"
+                  pattern="[0-9]{10}"
                   value={studentDetails.program}
                   onChange={(e) =>
                     setStudentDetails({
                       ...studentDetails,
-                      program: e.target.value,
+                      program: e.target.value.replace(/\D/g, "").slice(0, 10), // Only allow numbers and limit to 10 digits
                     })
                   }
+                  onBlur={(e) => {
+                    if (e.target.value.length !== 10) {
+                      e.target.setCustomValidity(
+                        "Please enter exactly 10 digits"
+                      );
+                    } else {
+                      e.target.setCustomValidity("");
+                    }
+                  }}
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Enrollment No.
-                </label>
-                <Input
-                  required
-                  value={studentDetails.enrollmentNo}
-                  onChange={(e) =>
-                    setStudentDetails({
-                      ...studentDetails,
-                      enrollmentNo: e.target.value,
-                    })
-                  }
-                />
+                {studentDetails.program.length > 0 &&
+                  studentDetails.program.length !== 10 && (
+                    <p className="text-red-500 text-xs mt-1">
+                      Mobile number must be 10 digits
+                    </p>
+                  )}
               </div>
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
                   className="px-4 py-2 border rounded hover:bg-gray-100"
+                  onClick={() => setShowStudentForm(false)}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+                  disabled={studentDetails.program.length !== 10}
                 >
                   Proceed to Payment
                 </button>

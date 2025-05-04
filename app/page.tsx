@@ -16,8 +16,11 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
+import { useUser } from "@clerk/nextjs";
+import Dashboard from "./event-dashboard/page";
 
 export default function Home() {
+  const { isLoaded, isSignedIn } = useUser();
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
     Autoplay({ delay: 3000, stopOnInteraction: false })
   ]);
@@ -50,6 +53,16 @@ export default function Home() {
     },
   ];
 
+  // if (!isLoaded) {
+  //   return <div>Loading...</div>; // Or a loading spinner
+  // }
+
+  // If user is signed in, show only the Footer
+  if (isSignedIn) {
+    return <Dashboard />;
+  }
+
+  // If not signed in, show all home pages
   return (
     <div className="min-h-screen">
       <ChatBot />
@@ -72,19 +85,28 @@ export default function Home() {
 
         {/* Foreground Content */}
         <div className="relative z-20 container mx-auto px-4 md:px-6 text-center">
-          <h1 className="text-shadow-lg text-3xl  md:text-5xl font-bold mb-4">
-            Welcome to <span className="text-5xl font-extrabold text-yellow-500">EVENTIFY</span>
+          <h1 className="text-shadow-lg text-3xl md:text-5xl font-bold mb-4">
+           <span className="text-5xl font-extrabold text-yellow-500">EVENTIFY</span>
           </h1>
           <p className="text-lg md:text-xl mb-8">
-            Manage your events efficiently and effectively
+            A web application based project in event management system
           </p>
           <div className="flex justify-center gap-6">
-            <Link href="/controlEvent">
+            <Link href="/sign-in">
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-bold py-4 px-8 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-purple-500/50 rounded-full"
               >
-                Get Started
+                Sign In
+              </Button>
+            </Link>
+            <Link href="/sign-up">
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-white border-white hover:bg-white/10 font-bold py-4 px-8 transform hover:scale-105 transition-all duration-300 rounded-full"
+              >
+                Sign Up
               </Button>
             </Link>
           </div>
@@ -248,46 +270,6 @@ export default function Home() {
             </Link>
           </div>
         </div>
-
-        {/* Add this to your global CSS or style tag */}
-        <style jsx>{`
-          @keyframes float1 {
-            0%,
-            100% {
-              transform: translateY(0) translateX(0);
-            }
-            50% {
-              transform: translateY(-20px) translateX(10px);
-            }
-          }
-          @keyframes float2 {
-            0%,
-            100% {
-              transform: translateY(0) translateX(0);
-            }
-            50% {
-              transform: translateY(10px) translateX(-15px);
-            }
-          }
-          @keyframes float3 {
-            0%,
-            100% {
-              transform: translateY(0) translateX(0);
-            }
-            50% {
-              transform: translateY(-15px) translateX(-10px);
-            }
-          }
-          .animate-float1 {
-            animation: float1 8s ease-in-out infinite;
-          }
-          .animate-float2 {
-            animation: float2 10s ease-in-out infinite;
-          }
-          .animate-float3 {
-            animation: float3 9s ease-in-out infinite;
-          }
-        `}</style>
       </section>
 
       {/* How It Works Section */}
@@ -339,7 +321,6 @@ export default function Home() {
 
       {/* Stats Section */}
       <Team />
-      <Footer />
     </div>
   );
 }

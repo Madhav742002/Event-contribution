@@ -1,76 +1,71 @@
+import { db } from "@/configs/db";
+import { payments, events } from "@/configs/schema";
+import { eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { paymentDetails } from "@/configs/schema";
-import { eq } from "drizzle-orm";
+import { auth } from "@clerk/nextjs/server";
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const { event, studentDetails, paymentId, amount, razorpayOrderId, razorpaySignature } = await request.json();
-    
-    const paymentData = {
-      eventId: event.id,
-      eventTitle: event.title,
-      studentName: studentDetails.name,
-      studentEmail: studentDetails.Email,
-      studentAddress: studentDetails.branch,
-      studentMobile: studentDetails.program,
-      enrollmentNo: studentDetails.enrollmentNo,
+    const body = await req.json();
+
+    const { eventId, studentName, studentEmail,  paymentId, amount } = body;
+
+    if (!eventId || !studentName || !studentEmail || !paymentId || !amount) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    await db.insert(payments).values({
+      eventId,
+      studentName,
+      studentEmail,
       paymentId,
-      amount: amount.toString(),
-      razorpayOrderId,
-      razorpaySignature,
-      status: "completed",
-      ticketDownloaded: false
-    };
+      amount,
+    });
 
-    const result = await db.insert(paymentDetails).values(paymentData).returning();
-
-    return NextResponse.json(
-      { 
-        success: true, 
-        paymentId: result[0].id,
-        message: "Payment details stored successfully"
-      },
-      { status: 201 }
-    );
+    return NextResponse.json({ message: "Payment record added successfully" }, { status: 201 });
   } catch (error) {
-    console.error("Error storing payment details:", error);
-    return NextResponse.json(
-      { 
-        error: "Failed to store payment details",
-        details: error instanceof Error ? error.message : "Unknown error"
-      },
-      { status: 500 }
-    );
+    console.error("Error adding payment record:", error);
+    return NextResponse.json({ error: "Failed to add payment record" }, { status: 500 });
   }
 }
 
-export async function GET(request: Request) {
+
+export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const paymentId = searchParams.get('paymentId');
-    const enrollmentNo = searchParams.get('enrollmentNo');
-
-    let whereClause;
-
-    if (paymentId) {
-      whereClause = eq(paymentDetails.paymentId, paymentId);
-    } else if (enrollmentNo) {
-      whereClause = eq(paymentDetails.enrollmentNo, enrollmentNo);
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const query = whereClause
-      ? db.select().from(paymentDetails).where(whereClause).orderBy(paymentDetails.createdAt)
-      : db.select().from(paymentDetails).orderBy(paymentDetails.createdAt);
+    // Get all events created by this user
+    const userEvents = await db.select({ id: events.id })
+      .from(events)
+      .where(eq(events.clerkId, userId));
 
-    const payments = await query;
+    if (userEvents.length === 0) {
+      return NextResponse.json({ success: true, payments: [], total: 0 }, { status: 200 });
+    }
 
-    return NextResponse.json({ success: true, payments });
+    // Convert event IDs to strings since payments.eventId is text
+    const eventIds = userEvents.map(event => event.id.toString());
+
+    // Get all payments for these events using 'inArray' instead of multiple 'eq'
+    const userPayments = await db.select()
+      .from(payments)
+      .where(inArray(payments.eventId, eventIds));
+
+    // Calculate total amount
+    const total = userPayments.reduce((sum, payment) => {
+      return sum + (parseFloat(payment.amount) || 0);
+    }, 0);
+
+    return NextResponse.json({ 
+      success: true, 
+      payments: userPayments,
+      total 
+    }, { status: 200 });
   } catch (error) {
-    console.error("Error fetching payment details:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch payment details" },
-      { status: 500 }
-    );
+    console.error("Error fetching payment records:", error);
+    return NextResponse.json({ error: "Failed to fetch payment records" }, { status: 500 });
   }
 }

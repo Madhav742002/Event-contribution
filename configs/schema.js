@@ -1,4 +1,4 @@
-import { serial, text, pgTable, varchar, jsonb, timestamp, numeric, boolean } from "drizzle-orm/pg-core";
+import { serial, text, pgTable, uuid , numeric,varchar, timestamp} from "drizzle-orm/pg-core";
 
 export const feedback = pgTable("feedback", {
   id: serial("id").primaryKey(),
@@ -13,38 +13,17 @@ export const contact = pgTable("contact",{
   message: text("message", { length: 1000 }).notNull(),
 });
 
-// Admins 
-export const admins = pgTable("admins", {
-  id: serial("id").primaryKey(),
-  userId: text("userId").notNull(),
-  organizationName: text("organizationName").notNull(),
-  eventName: text("eventName").notNull(),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  gender: text("gender").notNull(),
-});
-
-// users 
+// db/schema/users.ts
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  userId: text("userId").notNull(),
-  organizationName: text("organizationName").notNull(),
-  eventName: text("eventName").notNull(),
+  clerkId: text("clerkId").notNull().unique(), // Clerk User ID
   name: text("name").notNull(),
   email: text("email").notNull(),
-  gender: text("gender").notNull(),
+  imageUrl: text("imageUrl"), // Optional: Profile Image URL
 });
 
-//volunteers
+// db/schema/events.ts
 
-export const volunteers = pgTable("volunteers", {
-  id: varchar("id").primaryKey(),
-  name: text("name").notNull(),
-  email: varchar("email").unique().notNull(),
-  post: text("post").notNull(),
-});
-
-// Events table
 export const events = pgTable("events", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
@@ -52,29 +31,19 @@ export const events = pgTable("events", {
   date: text("date").notNull(),
   time: text("time").notNull(),
   location: text("location").notNull(),
-  ticketPrice: text("ticketPrice"),
-  imageUrls: jsonb("imageUrls"), // Store multiple image URLs as JSON array
-  createdBy: text("createdBy").notNull(), // organizationName
-  createdAt: text("createdAt").notNull(),
+  ticketPrice: text("ticket_price").notNull(),
+  imageUrls: text("image_urls").array(), // Array of URLs
+  clerkId: text("clerk_id").notNull(), // 👈 Important: link to user
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Payment details table
-export const paymentDetails = pgTable("paymentDetails", {
+export const payments = pgTable("payments", {
   id: serial("id").primaryKey(),
-  eventId: text("eventId").notNull(),
-  eventTitle: text("eventTitle").notNull(),
-  studentName: text("studentName").notNull(),
-  studentEmail: varchar("studentEmail", { length: 255 }).notNull(),
-  studentAddress: text("studentAddress").notNull(),
-  studentMobile: varchar("studentMobile", { length: 10 }).notNull(),
-  enrollmentNo: varchar("enrollmentNo", { length: 20 }).notNull(),
-  paymentId: varchar("paymentId", { length: 100 }).notNull().unique(),
-  amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
-  paymentDate: timestamp("paymentDate").defaultNow(),
-  status: varchar("status", { length: 20 }).notNull().default("completed"),
-  razorpayOrderId: varchar("razorpayOrderId", { length: 100 }),
-  razorpaySignature: varchar("razorpaySignature", { length: 255 }),
-  ticketDownloaded: boolean("ticketDownloaded").default(false),
-  createdAt: timestamp("createdAt").defaultNow(),
-  updatedAt: timestamp("updatedAt").defaultNow(),
+  eventId: text("event_id").notNull(), // Link to event
+  studentName: text("student_name").notNull(),
+  studentEmail: text("student_email").notNull(),
+  paymentId: text("payment_id").notNull(),
+  amount: numeric("amount").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
 });
+
