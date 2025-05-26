@@ -13,13 +13,13 @@ export const contact = pgTable("contact",{
   message: text("message", { length: 1000 }).notNull(),
 });
 
-// db/schema/users.ts
+
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  clerkId: text("clerkId").notNull().unique(), // Clerk User ID
+  clerkId: text("clerkId").notNull().unique(),
   name: text("name").notNull(),
   email: text("email").notNull(),
-  imageUrl: text("imageUrl"), // Optional: Profile Image URL
+  imageUrl: text("imageUrl"), 
 });
 
 // db/schema/events.ts

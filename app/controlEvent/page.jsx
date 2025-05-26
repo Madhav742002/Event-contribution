@@ -296,17 +296,48 @@ useEffect(() => {
 
   // Ensure handleEditEvent works correctly
 
+  // if (loading) {
+  //   return <p className="text-center py-8 text-gray-500 p-40">Loading events...</p>;
+  // }
+
+  // if (error) {
+  //   return <p className="text-center py-8 text-red-500">{error}</p>;
+  // }
+
+  // if (!formData) {
+  //   return <div>Loading...</div>;
+  // }
+
   if (loading) {
-    return <p className="text-center py-8 text-gray-500 p-40">Loading events...</p>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center h-[50vh]">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+             <h1 className='font-extrabold'>EVENTIFY</h1>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <p className="text-center py-8 text-red-500">{error}</p>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div
+            className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
+            role="alert"
+          >
+            <strong className="font-bold">Error!</strong>
+            <span className="block sm:inline"> {error}</span>
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  if (!formData) {
-    return <div>Loading...</div>;
-  }
+
 
   // Main render return
   return (
